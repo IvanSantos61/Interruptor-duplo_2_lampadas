@@ -34,12 +34,20 @@
         .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
 
         .alavanca { position: absolute; z-index: 120; cursor: pointer; }
+
+        /* Estilo das Teclas do Interruptor */
+        .tecla {
+            position: absolute;
+            z-index: 110;
+            cursor: pointer;
+            display: block; /* Mantidas visíveis, ajuste a opacidade se necessário antes da montagem */
+        }
         
         /* Estilo dos Conectores de Derivação */
         .conector {
             position: absolute;
-            z-index: 115; /* À frente dos cabos, atrás das bolinhas */
-            display: none; /* Inicia escondido */
+            z-index: 115;
+            display: none;
             pointer-events: none;
         }
 
@@ -67,6 +75,9 @@
         <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()">
         <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
 
+        <img id="tecla-l1" src="tecla_off.png" class="tecla" style="top: 65%; left: 57%; width: 30px;" onclick="toggleTecla(1)">
+        <img id="tecla-l2" src="tecla_off.png" class="tecla" style="top: 70%; left: 57%; width: 30px;" onclick="toggleTecla(2)">
+
         <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
         <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
     </div>
@@ -76,23 +87,25 @@
             { id: 'REDEFASE',   cor: 'red',    a: { top: 38, left: 26 }, b: { top: 17, left: 99 } },
             { id: 'REDENEUTRO', cor: 'blue',   a: { top: 35, left: 44.5}, b: { top: 14, left: 99 } },
             { id: 'FASEINT',    cor: 'red',    a: { top: 19, left: 60 }, b: { top: 67, left: 58 } },
-            { id: 'JUMP',       cor: 'red',    a: { top: 68, left: 56 }, b: { top: 72, left: 58 } },
-            { id: 'RETORNO1',   cor: 'yellow', a: { top: 68, left: 64 }, b: { top: 55, left: 89.7 } },
-            { id: 'RETORNO2',   cor: 'yellow', a: { top: 73, left: 64 }, b: { top: 55, left: 75 } },
-            { id: 'NEUTROL1',   cor: 'blue',   a: { top: 15, left: 77.2 }, b: { top: 55, left: 75 } },
-            { id: 'NEUTROL2',   cor: 'blue',   a: { top: 15, left: 93.2 }, b: { top: 56, left: 91.5 } }
+            { id: 'JUMP',        cor: 'red',    a: { top: 68, left: 56 }, b: { top: 72, left: 58 } },
+            { id: 'RETORNO1',    cor: 'yellow', a: { top: 68, left: 64 }, b: { top: 55, left: 89.7 } },
+            { id: 'RETORNO2',    cor: 'yellow', a: { top: 73, left: 64 }, b: { top: 55, left: 75 } },
+            { id: 'NEUTROL1',    cor: 'blue',   a: { top: 15, left: 77.2 }, b: { top: 55, left: 75 } },
+            { id: 'NEUTROL2',    cor: 'blue',   a: { top: 15, left: 93.2 }, b: { top: 56, left: 91.5 } }
         ];
 
         let passoAtivo = 0;
         let pA_ok = false;
         let dgLigado = false;
         let drLigado = false;
+        let tecla1Ligada = false;
+        let tecla2Ligada = false;
 
         const totalFrames = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 25 };
 
         function carregarPasso() {
             if (passoAtivo >= coordenadasInstalacao.length) {
-                document.getElementById('msg').innerHTML = "MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O DG E O DR.</span>";
+                document.getElementById('msg').innerHTML = "MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O SISTEMA.</span>";
                 document.getElementById('ponto-A').style.display = 'none';
                 document.getElementById('ponto-B').style.display = 'none';
                 return;
@@ -100,7 +113,6 @@
 
             const item = coordenadasInstalacao[passoAtivo];
 
-            // Lógica de ativação dos conectores baseada no ID do cabo
             if (item.id === 'FASEINT') {
                 document.getElementById('con-fase').style.display = 'block';
             } else if (item.id === 'NEUTROL1') {
@@ -161,11 +173,23 @@
             verificarEnergia();
         }
 
+        function toggleTecla(num) {
+            if (num === 1) {
+                tecla1Ligada = !tecla1Ligada;
+                document.getElementById('tecla-l1').src = tecla1Ligada ? 'tecla_on.png' : 'tecla_off.png';
+            } else {
+                tecla2Ligada = !tecla2Ligada;
+                document.getElementById('tecla-l2').src = tecla2Ligada ? 'tecla_on.png' : 'tecla_off.png';
+            }
+            verificarEnergia();
+        }
+
         function verificarEnergia() {
             if (passoAtivo >= coordenadasInstalacao.length) {
                 const painel = document.getElementById('msg');
                 if (dgLigado && drLigado) {
                     painel.innerHTML = "<span style='color:#00ff00'>SISTEMA ENERGIZADO - OK</span>";
+                    // Aqui você poderá adicionar a lógica para as lâmpadas acenderem
                 } else {
                     painel.innerHTML = "<span style='color:#ff0000'> CIRCUITO SECCIONADO</span>";
                 }
