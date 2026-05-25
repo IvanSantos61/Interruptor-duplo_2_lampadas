@@ -8,7 +8,12 @@
         html, body { margin: 0; padding: 0; background: #060b13; width: 100%; min-height: 100vh; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        #container-simulador { position: relative; width: 1000px; height: 600px; background: url('ambiente.jpg') no-repeat center center; background-size: contain; border: 2px solid #1a2a44; }
+        
+        #container-simulador { 
+            position: relative; width: 1000px; height: 600px; 
+            background: url('ambiente.jpg') no-repeat center center; 
+            background-size: contain; border: 2px solid #1a2a44; 
+        }
         
         .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: block; }
         
@@ -21,23 +26,51 @@
 
         .alavanca, .tecla { position: absolute; z-index: 110; cursor: pointer; }
         
-        /* A lâmpada acesa fica em uma camada superior para brilhar sobre o fundo */
-        .lampada-acesa { 
-            position: absolute; 
-            z-index: 105; 
-            pointer-events: none; 
-            display: none; /* Começa invisível */
+        .lampada-acesa { position: absolute; z-index: 105; pointer-events: none; display: none; }
+        .conector { position: absolute; z-index: 115; display: none; pointer-events: none; }
+        
+        #painel-status { margin-bottom: 15px; color: #00f0ff; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
+
+        /* ESTILOS DOS HOTSPOTS E TOOLTIP */
+        #tooltip {
+            position: fixed;
+            background: rgba(0, 240, 255, 0.95);
+            color: #060b13;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+            pointer-events: none;
+            display: none;
+            z-index: 2000;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+            border: 1px solid #fff;
+            text-transform: uppercase;
         }
 
-        .conector { position: absolute; z-index: 115; display: none; pointer-events: none; }
-        #painel-status { margin-bottom: 15px; color: #00f0ff; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
+        .hotspot {
+            position: absolute;
+            cursor: help;
+            z-index: 100;
+            /* background: rgba(255, 0, 0, 0.2); */ /* Descomente para ajustar as posições */
+        }
     </style>
 </head>
 <body>
 
+    <div id="tooltip"></div>
+
     <div id="painel-status">MODO DE INSTALAÇÃO: <span id="msg">INICIANDO...</span></div>
 
     <div id="container-simulador">
+        <div class="hotspot" style="top: 2%; left: 5%; width: 400px; height: 35px;" onmouseover="showTip('BARRA DE ATERRAMENTO')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 25%; left: 11%; width: 45px; height: 110px;" onmouseover="showTip('DISJUNTOR GERAL')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 25%; left: 16%; width: 45px; height: 110px;" onmouseover="showTip('DPS (PROTETOR DE SURTO)')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 25%; left: 22%; width: 75px; height: 110px;" onmouseover="showTip('DISPOSITIVO DR')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 25%; left: 31%; width: 130px; height: 110px;" onmouseover="showTip('DISJUNTORES DOS CIRCUITOS')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 2%; left: 65%; width: 300px; height: 35px;" onmouseover="showTip('BARRA DE NEUTRO')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 5%; left: 96%; width: 40px; height: 200px;" onmouseover="showTip('REDE ELÉTRICA')" onmouseout="hideTip()"></div>
+
         <img id="REDEFASE" class="camada-cabo">
         <img id="REDENEUTRO" class="camada-cabo">
         <img id="FASEINT" class="camada-cabo">
@@ -51,13 +84,14 @@
         <img id="con-neutro1" src="con_derivacao.png" class="conector" style="top: 11.4%; left: 75.7%; width: 40px;">
         <img id="con-neutro2" src="con_derivacao.png" class="conector" style="top: 11.4%; left: 92%; width: 40px;">
 
-        <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()">
-        <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
-        <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 64.5%; left: 57.5%; width: 65px;" onclick="toggleTecla(1)">
-        <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 68.9%; left: 57.5%; width: 65px;" onclick="toggleTecla(2)">
+        <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()" onmouseover="showTip('DISJUNTOR GERAL')" onmouseout="hideTip()">
+        <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()" onmouseover="showTip('DISPOSITIVO DR')" onmouseout="hideTip()">
+        
+        <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 64.5%; left: 57.5%; width: 65px;" onclick="toggleTecla(1)" onmouseover="showTip('INTERRUPTOR 2 SEÇÕES')" onmouseout="hideTip()">
+        <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 68.9%; left: 57.5%; width: 65px;" onclick="toggleTecla(2)" onmouseover="showTip('INTERRUPTOR 2 SEÇÕES')" onmouseout="hideTip()">
 
-        <img id="lamp1-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 66.6%; width: 170px;">
-        <img id="lamp2-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 82.9%; width: 170px;">
+        <img id="lamp1-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 66.6%; width: 170px;" onmouseover="showTip('LÂMPADA LED 127V / BOCAL E27')" onmouseout="hideTip()">
+        <img id="lamp2-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 82.9%; width: 170px;" onmouseover="showTip('LÂMPADA LED 127V / BOCAL E27')" onmouseout="hideTip()">
 
         <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
         <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
@@ -84,41 +118,34 @@
 
         const totalFrames = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 25 };
 
-      function carregarPasso() {
-    if (passoAtivo >= coordenadasInstalacao.length) {
-        document.getElementById('msg').innerHTML = "MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O SISTEMA.</span>";
-        document.getElementById('ponto-A').style.display = 'none';
-        document.getElementById('ponto-B').style.display = 'none';
-        verificarEnergia();
-        return;
-    }
-    const item = coordenadasInstalacao[passoAtivo];
-    
-    // Lógica dos conectores
-    if (item.id === 'FASEINT') document.getElementById('con-fase').style.display = 'block';
-    else if (item.id === 'NEUTROL1') document.getElementById('con-neutro1').style.display = 'block';
-    else if (item.id === 'NEUTROL2') document.getElementById('con-neutro2').style.display = 'block';
+        function carregarPasso() {
+            if (passoAtivo >= coordenadasInstalacao.length) {
+                document.getElementById('msg').innerHTML = "MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O SISTEMA.</span>";
+                document.getElementById('ponto-A').style.display = 'none';
+                document.getElementById('ponto-B').style.display = 'none';
+                verificarEnergia();
+                return;
+            }
+            const item = coordenadasInstalacao[passoAtivo];
+            if (item.id === 'FASEINT') document.getElementById('con-fase').style.display = 'block';
+            else if (item.id === 'NEUTROL1') document.getElementById('con-neutro1').style.display = 'block';
+            else if (item.id === 'NEUTROL2') document.getElementById('con-neutro2').style.display = 'block';
 
-    document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": " + item.id;
-    
-    // CONFIGURAÇÃO PONTO A
-    const pA = document.getElementById('ponto-A');
-    pA.style.top = item.a.top + "%"; 
-    pA.style.left = item.a.left + "%";
-    pA.classList.remove('ponto-verde'); // Remove o verde do passo anterior
-    pA.style.backgroundColor = item.cor; // Aplica a cor do cabo atual (red, blue, yellow)
-    pA.style.display = "block";
-    
-    // CONFIGURAÇÃO PONTO B
-    const pB = document.getElementById('ponto-B');
-    pB.style.top = item.b.top + "%"; 
-    pB.style.left = item.b.left + "%";
-    pB.classList.remove('ponto-verde'); // Remove o verde do passo anterior
-    pB.style.backgroundColor = item.cor; // Aplica a cor do cabo atual
-    pB.style.display = "none";
-    
-    pA_ok = false;
-}
+            document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": " + item.id;
+            
+            const pA = document.getElementById('ponto-A');
+            pA.style.top = item.a.top + "%"; pA.style.left = item.a.left + "%";
+            pA.classList.remove('ponto-verde');
+            pA.style.backgroundColor = item.cor;
+            pA.style.display = "block";
+            
+            const pB = document.getElementById('ponto-B');
+            pB.style.top = item.b.top + "%"; pB.style.left = item.b.left + "%";
+            pB.classList.remove('ponto-verde');
+            pB.style.backgroundColor = item.cor;
+            pB.style.display = "none";
+            pA_ok = false;
+        }
 
         function cliquePonto(tipo) {
             if (tipo === 'A') { pA_ok = true; document.getElementById('ponto-A').classList.add('ponto-verde'); document.getElementById('ponto-B').style.display = "block"; }
@@ -153,23 +180,28 @@
             const painel = document.getElementById('msg');
             const l1 = document.getElementById('lamp1-on');
             const l2 = document.getElementById('lamp2-on');
-            
             const fiacaoPronta = passoAtivo >= coordenadasInstalacao.length;
             const energiaDisponivel = dgLigado && drLigado;
-
             if (fiacaoPronta) {
                 if (energiaDisponivel) {
                     painel.innerHTML = "<span style='color:#00ff00'>SISTEMA ENERGIZADO - OK</span>";
-                    // Só mostra o 'lamp_on.png' se a tecla estiver ligada
                     l1.style.display = tecla1Ligada ? 'block' : 'none';
                     l2.style.display = tecla2Ligada ? 'block' : 'none';
                 } else {
                     painel.innerHTML = "<span style='color:#ff0000'> CIRCUITO SECCIONADO</span>";
-                    l1.style.display = 'none';
-                    l2.style.display = 'none';
+                    l1.style.display = 'none'; l2.style.display = 'none';
                 }
             }
         }
+
+        // LÓGICA DO TOOLTIP
+        const tip = document.getElementById('tooltip');
+        function showTip(texto) { tip.innerText = texto; tip.style.display = 'block'; }
+        function hideTip() { tip.style.display = 'none'; }
+        document.addEventListener('mousemove', function(e) {
+            tip.style.left = (e.clientX + 15) + 'px';
+            tip.style.top = (e.clientY - 15) + 'px';
+        });
 
         window.onload = carregarPasso;
     </script>
