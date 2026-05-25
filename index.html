@@ -25,7 +25,8 @@
             pointer-events: none; z-index: 10; display: block;
         }
 
-        .ponto-xao {
+        /* CORREÇÃO AQUI: Nome da classe ajustado */
+        .ponto-conexao {
             position: absolute; width: 22px; height: 22px; border-radius: 50%;
             border: 2px solid #fff; z-index: 150; cursor: pointer;
             display: none; transform: translate(-50%, -50%);
@@ -164,7 +165,6 @@
         }
 
         function toggleTecla(num) {
-            // Agora a tecla alterna a imagem independente do passo da fiação
             if (num === 1) {
                 tecla1Ligada = !tecla1Ligada;
                 document.getElementById('tecla-l1').src = tecla1Ligada ? 'intum_on.png' : 'intum_off.png';
@@ -177,8 +177,6 @@
 
         function verificarEnergia() {
             const painel = document.getElementById('msg');
-            
-            // A mensagem de "Energizado" só aparece se a fiação acabou
             if (passoAtivo >= coordenadasInstalacao.length) {
                 if (dgLigado && drLigado) {
                     painel.innerHTML = "<span style='color:#00ff00'>SISTEMA ENERGIZADO - OK</span>";
