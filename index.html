@@ -2,51 +2,36 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SMT Pro - Controle de Proteção</title>
+    <title>Laboratório SMT Pro - Instalação</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #060b13; color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
         
-        body { 
-            background: #060b13; 
-            color: white; 
-            font-family: 'Orbitron', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
-        }
-
-        #painel-status {
-            width: 100%; max-width: 1000px; padding: 15px; text-align: center;
-            color: #00f0ff; text-shadow: 0 0 10px #00f0ff; font-size: 1.2em;
-        }
+        #painel-status { width: 100%; max-width: 1000px; padding: 15px; text-align: center; color: #00f0ff; text-shadow: 0 0 10px #00f0ff; font-size: 1.1em; }
 
         #container-simulador { 
-            position: relative; 
-            width: 1000px; height: 600px; 
-            background: url('ambiente.jpg') no-repeat center center;
-            background-size: contain;
+            position: relative; width: 1000px; height: 600px; 
+            background: url('ambiente.jpg') no-repeat center center; background-size: contain;
         }
 
         .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
 
-        /* Estilo para as Alavancas do DG e DR */
-        .alavanca {
-            position: absolute;
-            z-index: 120;
-            cursor: pointer;
-            transition: transform 0.1s;
+        /* Estilo das Bolinhas de Conexão */
+        .ponto-conexao {
+            position: absolute; width: 16px; height: 16px; border-radius: 50%;
+            border: 2px solid white; cursor: pointer; z-index: 150;
+            box-shadow: 0 0 10px rgba(0,0,0,0.8); transition: background 0.3s;
+            display: none; /* Aparecem por ordem */
         }
-        .alavanca:active { transform: scale(0.9); }
+        .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
 
-        /* Hotspots dos Interruptores S1 e S2 continuam aqui */
-        .tecla-s { position: absolute; z-index: 100; cursor: pointer; border: 1px dashed rgba(0, 240, 255, 0.2); }
+        .alavanca { position: absolute; z-index: 120; cursor: pointer; width: 35px; }
     </style>
 </head>
 <body>
 
-    <div id="painel-status">SISTEMA SMT: <span id="msg">AGUARDANDO COMANDO</span></div>
+    <div id="painel-status">MISSÃO: <span id="msg">INSTALE A REDE FASE</span></div>
 
     <div id="container-simulador">
         <img id="REDEFASE" class="camada-cabo">
@@ -58,61 +43,90 @@
         <img id="NEUTROL1" class="camada-cabo">
         <img id="NEUTROL2" class="camada-cabo">
 
-        <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 25%; left: 12%; width: 30px;" onclick="toggleDG()">
-        <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 25%; left: 18%; width: 55px;" onclick="toggleDR()">
+        <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
+        <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
 
-        <div class="tecla-s" style="top: 45%; left: 44%; width: 35px; height: 55px;" onclick="acionarLampada(1)"></div>
-        <div class="tecla-s" style="top: 45%; left: 49%; width: 35px; height: 55px;" onclick="acionarLampada(2)"></div>
+        <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 20%; left: 10%;" onclick="toggleDG()">
+        <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 20%; left: 18%; width: 55px;" onclick="toggleDR()">
     </div>
 
     <script>
-        const seq = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 20 };
-        
-        let dgOn = false;
-        let drOn = false;
+        const ordemInstalacao = [
+            { id: 'REDEFASE', cor: '#ff0000', a: [10, 5], b: [20, 10], msg: "REDE FASE" },
+            { id: 'REDENEUTRO', cor: '#0000ff', a: [10, 15], b: [20, 18], msg: "REDE NEUTRO" },
+            { id: 'FASEINT', cor: '#ff0000', a: [25, 10], b: [45, 44], msg: "ALIMENTAÇÃO INTERRUPTOR" },
+            { id: 'JUMP', cor: '#ff0000', a: [45, 45], b: [45, 49], msg: "JUMP INTERRUPTOR" },
+            { id: 'RETORNO1', cor: '#000000', a: [48, 44], b: [15, 70], msg: "RETORNO LÂMPADA 1" },
+            { id: 'RETORNO2', cor: '#000000', a: [48, 49], b: [15, 80], msg: "RETORNO LÂMPADA 2" },
+            { id: 'NEUTROL1', cor: '#0000ff', a: [20, 20], b: [10, 70], msg: "NEUTRO LÂMPADA 1" },
+            { id: 'NEUTROL2', cor: '#0000ff', a: [20, 22], b: [10, 80], msg: "NEUTRO LÂMPADA 2" }
+        ];
 
-        async function carregarTudo() {
-            for (let id in seq) {
-                const img = document.getElementById(id);
-                for (let i = 1; i <= seq[id]; i++) {
-                    img.src = `${id}/quadro${String(i).padStart(3, '0')}.png`;
-                }
-            }
-            document.getElementById('msg').innerText = "FIAÇÃO CARREGADA. LIGUE O DG E O DR.";
-        }
+        let passoAtual = 0;
+        let pontoA_clicado = false;
+        const totalQuadros = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 20 };
 
-        function toggleDG() {
-            dgOn = !dgOn;
-            document.getElementById('al-dg').src = dgOn ? 'al_dg_on.png' : 'al_dg_off.png';
-            atualizarEnergia();
-        }
-
-        function toggleDR() {
-            drOn = !drOn;
-            document.getElementById('al-dr').src = drOn ? 'al_dr_on.png' : 'al_dr_off.png';
-            atualizarEnergia();
-        }
-
-        function atualizarEnergia() {
-            const msg = document.getElementById('msg');
-            if (dgOn && drOn) {
-                msg.innerHTML = "<span style='color:#00ff00'>SISTEMA ENERGIZADO</span>";
-            } else if (dgOn && !drOn) {
-                msg.innerHTML = "<span style='color:#ffcc00'>LIGUE O DR PARA LIBERAR TENSÃO</span>";
-            } else {
-                msg.innerHTML = "<span style='color:#ff0000'>SISTEMA DESLIGADO</span>";
-            }
-        }
-
-        function acionarLampada(n) {
-            if (!dgOn || !drOn) {
-                alert("Sem energia! Verifique o DG e o DR.");
+        function carregarPasso() {
+            if (passoAtual >= ordemInstalacao.length) {
+                document.getElementById('msg').innerText = "INSTALAÇÃO CONCLUÍDA! LIGUE O DG E DR.";
+                document.getElementById('ponto-A').style.display = 'none';
+                document.getElementById('ponto-B').style.display = 'none';
                 return;
             }
-            document.getElementById('msg').innerText = `LÂMPADA ${n} ACIONADA`;
+
+            const dados = ordemInstalacao[passoAtual];
+            document.getElementById('msg').innerText = "INSTALE: " + dados.msg;
+            
+            // Posiciona e mostra Ponto A
+            const pA = document.getElementById('ponto-A');
+            pA.style.top = dados.a[0] + "%";
+            pA.style.left = dados.a[1] + "%";
+            pA.style.backgroundColor = dados.cor;
+            pA.style.display = 'block';
+            pA.classList.remove('ponto-verde');
+
+            // Prepara Ponto B mas deixa oculto
+            const pB = document.getElementById('ponto-B');
+            pB.style.top = dados.b[0] + "%";
+            pB.style.left = dados.b[1] + "%";
+            pB.style.backgroundColor = dados.cor;
+            pB.style.display = 'none';
+            pB.classList.remove('ponto-verde');
+            
+            pontoA_clicado = false;
         }
 
-        window.onload = carregarTudo;
+        function cliquePonto(tipo) {
+            if (tipo === 'A') {
+                pontoA_clicado = true;
+                document.getElementById('ponto-A').classList.add('ponto-verde');
+                document.getElementById('ponto-B').style.display = 'block';
+            } else if (tipo === 'B' && pontoA_clicado) {
+                document.getElementById('ponto-B').classList.add('ponto-verde');
+                completarCabo();
+            }
+        }
+
+        async function completarCabo() {
+            const id = ordemInstalacao[passoAtual].id;
+            const img = document.getElementById(id);
+            const total = totalQuadros[id];
+
+            for (let i = 1; i <= total; i++) {
+                img.src = `${id}/quadro${String(i).padStart(3, '0')}.png`;
+                await new Promise(r => setTimeout(r, 15));
+            }
+
+            passoAtual++;
+            setTimeout(carregarPasso, 500);
+        }
+
+        // Funções de DG/DR mantidas para teste final
+        let dg = false, dr = false;
+        function toggleDG() { dg = !dg; document.getElementById('al-dg').src = dg ? 'al_dg_on.png' : 'al_dg_off.png'; }
+        function toggleDR() { dr = !dr; document.getElementById('al-dr').src = dr ? 'al_dr_on.png' : 'al_dr_off.png'; }
+
+        window.onload = carregarPasso;
     </script>
 </body>
 </html>
