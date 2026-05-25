@@ -2,132 +2,137 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Laboratório SMT Pro - Fiação Completa</title>
+    <title>SMT Pro - Interruptor Duplo</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* Reset total para eliminar molduras brancas */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body { 
-            font-family: 'Segoe UI', sans-serif; background: #060b13; color: white; 
-            display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px;
+            background: #060b13; 
+            color: white; 
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
         }
 
-        h1 { font-family: 'Orbitron'; color: #00f0ff; text-shadow: 0 0 15px #00f0ff; text-transform: uppercase; margin-bottom: 10px; }
-
         #painel-status {
-            width: 90%; max-width: 1000px; background: rgba(0,0,0,0.6);
-            border: 1px solid #1a2a44; padding: 15px; margin-bottom: 20px;
-            font-family: 'Orbitron'; text-align: center; border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            text-align: center;
+            color: #00f0ff;
+            text-shadow: 0 0 10px #00f0ff;
+            font-size: 1.2em;
+            letter-spacing: 2px;
         }
 
         #container-simulador { 
-            position: relative; width: 1000px; height: 600px; /* Ajuste conforme seu ambiente.jpg */
-            border: 2px solid #1a2a44; border-radius: 10px; overflow: hidden; 
-            background: url('ambiente.jpg') no-repeat center; background-size: contain;
+            position: relative; 
+            width: 1000px; /* Largura padrão dos seus ambientes */
+            height: 600px; /* Altura padrão */
+            background: url('ambiente.jpg') no-repeat center center;
+            background-size: contain;
+            line-height: 0;
         }
 
+        /* Camadas de cabos - Absolutas e transparentes */
         .camada-cabo { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            pointer-events: none; z-index: 10;
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            pointer-events: none; 
+            z-index: 10;
         }
 
-        .tecla-hotspot {
-            position: absolute; z-index: 100; cursor: pointer;
-            border: 1px dashed rgba(0, 240, 255, 0.3); transition: 0.2s;
+        /* Hotspots Invisíveis para as teclas */
+        .tecla {
+            position: absolute;
+            z-index: 100;
+            cursor: pointer;
+            border: 1px dashed rgba(0, 240, 255, 0.1); /* Quase invisível */
         }
-        .tecla-hotspot:hover { background: rgba(0, 240, 255, 0.2); border-color: #00f0ff; }
+        .tecla:hover { border: 1px solid #00f0ff; background: rgba(0, 240, 255, 0.05); }
 
-        .status-on { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
-        .status-off { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+        .status-on { color: #00ff00; }
+        .status-off { color: #ff0000; }
     </style>
 </head>
 <body>
 
-    <h1>LABORATÓRIO SMT PRO</h1>
-
-    <div id="painel-status">
-        <div id="status-mensagem">INICIALIZANDO SISTEMA...</div>
-    </div>
+    <div id="painel-status">SISTEMA SMT PRO: <span id="msg">INICIALIZANDO...</span></div>
 
     <div id="container-simulador">
         <img id="REDEFASE" class="camada-cabo">
         <img id="REDENEUTRO" class="camada-cabo">
         <img id="FASEINT" class="camada-cabo">
         <img id="JUMP" class="camada-cabo">
-        
         <img id="RETORNO1" class="camada-cabo">
         <img id="RETORNO2" class="camada-cabo">
         <img id="NEUTROL1" class="camada-cabo">
         <img id="NEUTROL2" class="camada-cabo">
 
-        <div class="tecla-hotspot" style="top: 45%; left: 42%; width: 40px; height: 60px;" onclick="operarCircuito(1)"></div>
-        <div class="tecla-hotspot" style="top: 45%; left: 48%; width: 40px; height: 60px;" onclick="operarCircuito(2)"></div>
+        <div class="tecla" style="top: 45%; left: 44%; width: 35px; height: 55px;" onclick="toggle(1)"></div>
+        <div class="tecla" style="top: 45%; left: 49%; width: 35px; height: 55px;" onclick="toggle(2)"></div>
     </div>
 
     <script>
-        // Dados das sequências conforme suas pastas no GitHub
-        const fiação = {
+        const frames = {
             REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10,
             RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 20
         };
 
-        let circuito1Ativo = false;
-        let circuito2Ativo = false;
+        let ligado1 = false;
+        let ligado2 = false;
 
-        // Função universal de animação
-        async function animar(id) {
-            const img = document.getElementById(id);
-            const total = fiação[id];
-            
+        async function animar(pasta) {
+            const img = document.getElementById(pasta);
+            const total = frames[pasta];
             for (let i = 1; i <= total; i++) {
-                let frame = String(i).padStart(3, '0');
-                img.src = `${id}/quadro${frame}.png`;
-                // Pequeno delay para percepção do movimento do cabo
-                await new Promise(r => setTimeout(r, 20)); 
+                let f = String(i).padStart(3, '0');
+                img.src = `${pasta}/quadro${f}.png`;
+                await new Promise(r => setTimeout(r, 25));
             }
         }
 
-        async function operarCircuito(n) {
-            const msg = document.getElementById('status-mensagem');
-            
-            if (n === 1) {
-                circuito1Ativo = !circuito1Ativo;
-                if (circuito1Ativo) {
-                    msg.innerHTML = "LÂMPADA 1: <span class='status-on'>LIGADA</span>";
-                    // Roda Neutro e Retorno simultaneamente
+        async function toggle(id) {
+            const msg = document.getElementById('msg');
+            if (id === 1) {
+                ligado1 = !ligado1;
+                if (ligado1) {
+                    msg.innerHTML = "CIRC 1 <span class='status-on'>LIGADO</span>";
                     animar('NEUTROL1');
                     await animar('RETORNO1');
                 } else {
-                    msg.innerHTML = "LÂMPADA 1: <span class='status-off'>DESLIGADA</span>";
+                    msg.innerHTML = "CIRC 1 <span class='status-off'>OFF</span>";
                     document.getElementById('RETORNO1').src = "";
                     document.getElementById('NEUTROL1').src = "";
                 }
             } else {
-                circuito2Ativo = !circuito2Ativo;
-                if (circuito2Ativo) {
-                    msg.innerHTML = "LÂMPADA 2: <span class='status-on'>LIGADA</span>";
+                ligado2 = !ligado2;
+                if (ligado2) {
+                    msg.innerHTML = "CIRC 2 <span class='status-on'>LIGADO</span>";
                     animar('NEUTROL2');
                     await animar('RETORNO2');
                 } else {
-                    msg.innerHTML = "LÂMPADA 2: <span class='status-off'>DESLIGADA</span>";
+                    msg.innerHTML = "CIRC 2 <span class='status-off'>OFF</span>";
                     document.getElementById('RETORNO2').src = "";
                     document.getElementById('NEUTROL2').src = "";
                 }
             }
         }
 
-        // Setup Inicial Automático
+        // Distribuição Inicial
         window.onload = async () => {
-            const msg = document.getElementById('status-mensagem');
-            
-            msg.innerText = "MONTANDO INFRAESTRUTURA DE REDE...";
             await animar('REDEFASE');
             await animar('REDENEUTRO');
-            
-            msg.innerText = "ALIMENTANDO INTERRUPTOR DUPLO...";
             await animar('FASEINT');
             await animar('JUMP');
-            
-            msg.innerText = "SISTEMA PRONTO: INTERAJA COM O INTERRUPTOR";
+            document.getElementById('msg').innerText = "SISTEMA PRONTO";
         };
     </script>
 </body>
