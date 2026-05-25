@@ -2,36 +2,44 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Laboratório SMT Pro - Instalação</title>
+    <title>Ajuste de Coordenadas - SMT Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #060b13; color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        body { background: #060b13; color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         
-        #painel-status { width: 100%; max-width: 1000px; padding: 15px; text-align: center; color: #00f0ff; text-shadow: 0 0 10px #00f0ff; font-size: 1.1em; }
-
         #container-simulador { 
-            position: relative; width: 1000px; height: 600px; 
-            background: url('ambiente.jpg') no-repeat center center; background-size: contain;
+            position: relative; 
+            width: 1000px; 
+            height: 600px; 
+            background: url('ambiente.jpg') no-repeat center center; 
+            background-size: contain;
+            border: 2px solid #1a2a44;
         }
 
         .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
 
-        /* Estilo das Bolinhas de Conexão */
+        /* Estilo das Bolinhas */
         .ponto-conexao {
-            position: absolute; width: 16px; height: 16px; border-radius: 50%;
-            border: 2px solid white; cursor: pointer; z-index: 150;
-            box-shadow: 0 0 10px rgba(0,0,0,0.8); transition: background 0.3s;
-            display: none; /* Aparecem por ordem */
+            position: absolute; 
+            width: 20px; 
+            height: 20px; 
+            border-radius: 50%;
+            border: 2px solid #fff; 
+            z-index: 150; 
+            cursor: move; /* Cursor de ajuste */
+            display: none;
+            transform: translate(-50%, -50%); /* Centraliza o clique na bolinha */
+            box-shadow: 0 0 10px #000;
         }
         .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
 
-        .alavanca { position: absolute; z-index: 120; cursor: pointer; width: 35px; }
+        #painel-status { margin-bottom: 15px; color: #00f0ff; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <div id="painel-status">MISSÃO: <span id="msg">INSTALE A REDE FASE</span></div>
+    <div id="painel-status">MODO DE AJUSTE: <span id="msg">CARREGANDO...</span></div>
 
     <div id="container-simulador">
         <img id="REDEFASE" class="camada-cabo">
@@ -40,91 +48,83 @@
         <img id="JUMP" class="camada-cabo">
         <img id="RETORNO1" class="camada-cabo">
         <img id="RETORNO2" class="camada-cabo">
-        <img id="NEUTROL1" class="camada-cabo">
-        <img id="NEUTROL2" class="camada-cabo">
+        <img id="NEUTRO1" class="camada-cabo">
+        <img id="NEUTRO2" class="camada-cabo">
 
         <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
         <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
-
-        <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 20%; left: 10%;" onclick="toggleDG()">
-        <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 20%; left: 18%; width: 55px;" onclick="toggleDR()">
     </div>
 
     <script>
-        const ordemInstalacao = [
-            { id: 'REDEFASE', cor: '#ff0000', a: [10, 5], b: [20, 10], msg: "REDE FASE" },
-            { id: 'REDENEUTRO', cor: '#0000ff', a: [10, 15], b: [20, 18], msg: "REDE NEUTRO" },
-            { id: 'FASEINT', cor: '#ff0000', a: [25, 10], b: [45, 44], msg: "ALIMENTAÇÃO INTERRUPTOR" },
-            { id: 'JUMP', cor: '#ff0000', a: [45, 45], b: [45, 49], msg: "JUMP INTERRUPTOR" },
-            { id: 'RETORNO1', cor: '#000000', a: [48, 44], b: [15, 70], msg: "RETORNO LÂMPADA 1" },
-            { id: 'RETORNO2', cor: '#000000', a: [48, 49], b: [15, 80], msg: "RETORNO LÂMPADA 2" },
-            { id: 'NEUTROL1', cor: '#0000ff', a: [20, 20], b: [10, 70], msg: "NEUTRO LÂMPADA 1" },
-            { id: 'NEUTROL2', cor: '#0000ff', a: [20, 22], b: [10, 80], msg: "NEUTRO LÂMPADA 2" }
+        /* ============================================================
+           TABELA DE COORDENADAS - AJUSTE AQUI (Valores em %)
+           ============================================================ */
+        const coordenadasInstalacao = [
+            { id: 'REDEFASE',   cor: 'red',    a: { top: 10.0, left: 5.0  }, b: { top: 20.0, left: 10.0 } },
+            { id: 'REDENEUTRO', cor: 'blue',   a: { top: 10.0, left: 15.0 }, b: { top: 20.0, left: 18.0 } },
+            { id: 'FASEINT',    cor: 'red',    a: { top: 25.0, left: 10.0 }, b: { top: 45.0, left: 44.0 } },
+            { id: 'JUMP',       cor: 'red',    a: { top: 45.0, left: 45.0 }, b: { top: 45.0, left: 49.0 } },
+            { id: 'RETORNO1',   cor: 'black',  a: { top: 48.0, left: 44.0 }, b: { top: 15.0, left: 70.0 } },
+            { id: 'RETORNO2',   cor: 'black',  a: { top: 48.0, left: 49.0 }, b: { top: 15.0, left: 80.0 } },
+            { id: 'NEUTRO1',    cor: 'blue',   a: { top: 20.0, left: 20.0 }, b: { top: 10.0, left: 70.0 } },
+            { id: 'NEUTRO2',    cor: 'blue',   a: { top: 20.0, left: 22.0 }, b: { top: 10.0, left: 80.0 } }
         ];
 
-        let passoAtual = 0;
-        let pontoA_clicado = false;
-        const totalQuadros = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 20 };
+        let passoAtivo = 0;
+        let pA_ok = false;
+        const totalFrames = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTRO1: 25, NEUTRO2: 20 };
 
         function carregarPasso() {
-            if (passoAtual >= ordemInstalacao.length) {
-                document.getElementById('msg').innerText = "INSTALAÇÃO CONCLUÍDA! LIGUE O DG E DR.";
-                document.getElementById('ponto-A').style.display = 'none';
-                document.getElementById('ponto-B').style.display = 'none';
+            if (passoAtivo >= coordenadasInstalacao.length) {
+                document.getElementById('msg').innerText = "INSTALAÇÃO COMPLETA!";
                 return;
             }
 
-            const dados = ordemInstalacao[passoAtual];
-            document.getElementById('msg').innerText = "INSTALE: " + dados.msg;
-            
-            // Posiciona e mostra Ponto A
+            const item = coordenadasInstalacao[passoAtivo];
+            document.getElementById('msg').innerText = "CONECTE: " + item.id;
+
+            // Configura Ponto A
             const pA = document.getElementById('ponto-A');
-            pA.style.top = dados.a[0] + "%";
-            pA.style.left = dados.a[1] + "%";
-            pA.style.backgroundColor = dados.cor;
-            pA.style.display = 'block';
+            pA.style.top = item.a.top + "%";
+            pA.style.left = item.a.left + "%";
+            pA.style.backgroundColor = item.cor;
+            pA.style.display = "block";
             pA.classList.remove('ponto-verde');
 
-            // Prepara Ponto B mas deixa oculto
+            // Configura Ponto B (escondido até clicar no A)
             const pB = document.getElementById('ponto-B');
-            pB.style.top = dados.b[0] + "%";
-            pB.style.left = dados.b[1] + "%";
-            pB.style.backgroundColor = dados.cor;
-            pB.style.display = 'none';
+            pB.style.top = item.b.top + "%";
+            pB.style.left = item.b.left + "%";
+            pB.style.backgroundColor = item.cor;
+            pB.style.display = "none";
             pB.classList.remove('ponto-verde');
-            
-            pontoA_clicado = false;
+
+            pA_ok = false;
         }
 
         function cliquePonto(tipo) {
             if (tipo === 'A') {
-                pontoA_clicado = true;
+                pA_ok = true;
                 document.getElementById('ponto-A').classList.add('ponto-verde');
-                document.getElementById('ponto-B').style.display = 'block';
-            } else if (tipo === 'B' && pontoA_clicado) {
+                document.getElementById('ponto-B').style.display = "block";
+            } else if (tipo === 'B' && pA_ok) {
                 document.getElementById('ponto-B').classList.add('ponto-verde');
-                completarCabo();
+                processarCabo();
             }
         }
 
-        async function completarCabo() {
-            const id = ordemInstalacao[passoAtual].id;
+        async function processarCabo() {
+            const id = coordenadasInstalacao[passoAtivo].id;
             const img = document.getElementById(id);
-            const total = totalQuadros[id];
-
-            for (let i = 1; i <= total; i++) {
+            
+            for (let i = 1; i <= totalFrames[id]; i++) {
                 img.src = `${id}/quadro${String(i).padStart(3, '0')}.png`;
-                await new Promise(r => setTimeout(r, 15));
+                await new Promise(r => setTimeout(r, 20));
             }
 
-            passoAtual++;
-            setTimeout(carregarPasso, 500);
+            passoAtivo++;
+            setTimeout(carregarPasso, 600);
         }
-
-        // Funções de DG/DR mantidas para teste final
-        let dg = false, dr = false;
-        function toggleDG() { dg = !dg; document.getElementById('al-dg').src = dg ? 'al_dg_on.png' : 'al_dg_off.png'; }
-        function toggleDR() { dr = !dr; document.getElementById('al-dr').src = dr ? 'al_dr_on.png' : 'al_dr_off.png'; }
 
         window.onload = carregarPasso;
     </script>
