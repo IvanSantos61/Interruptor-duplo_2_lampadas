@@ -5,51 +5,15 @@
     <title>SMT Pro - Laboratório de Instalação</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* RESET PARA ELIMINAR MOLDURAS */
         html, body { margin: 0; padding: 0; background: #060b13; width: 100%; min-height: 100vh; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            color: white; font-family: 'Orbitron', sans-serif; 
-            display: flex; flex-direction: column; align-items: center; padding: 20px; 
-        }
-        
-        #container-simulador { 
-            position: relative; width: 1000px; height: 600px; 
-            background: url('ambiente.jpg') no-repeat center center; 
-            background-size: contain; border: 2px solid #1a2a44;
-        }
-
-        .camada-cabo { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            pointer-events: none; z-index: 10; display: block;
-        }
-
-        /* CORREÇÃO AQUI: Nome da classe ajustado */
-        .ponto-conexao {
-            position: absolute; width: 22px; height: 22px; border-radius: 50%;
-            border: 2px solid #fff; z-index: 150; cursor: pointer;
-            display: none; transform: translate(-50%, -50%);
-            box-shadow: 0 0 12px #000;
-        }
+        body { color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        #container-simulador { position: relative; width: 1000px; height: 600px; background: url('ambiente.jpg') no-repeat center center; background-size: contain; border: 2px solid #1a2a44; }
+        .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: block; }
+        .ponto-conexao { position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; z-index: 150; cursor: pointer; display: none; transform: translate(-50%, -50%); box-shadow: 0 0 12px #000; }
         .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
-
-        .alavanca { position: absolute; z-index: 120; cursor: pointer; }
-
-        .tecla {
-            position: absolute;
-            z-index: 110;
-            cursor: pointer;
-            display: block;
-        }
-        
-        .conector {
-            position: absolute;
-            z-index: 115;
-            display: none;
-            pointer-events: none;
-        }
-
+        .alavanca, .tecla, .lampada { position: absolute; z-index: 110; cursor: pointer; }
+        .conector { position: absolute; z-index: 115; display: none; pointer-events: none; }
         #painel-status { margin-bottom: 15px; color: #00f0ff; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
     </style>
 </head>
@@ -69,7 +33,7 @@
 
         <img id="con-fase" src="con_derivacao.png" class="conector" style="top: 14%; left: 57%; width: 40px;">
         <img id="con-neutro1" src="con_derivacao.png" class="conector" style="top: 11.4%; left: 75.7%; width: 40px;">
-        <img id="con-neutro2" src="con_derivacao.png" class="conector" style="top: 11.4%; left: 92%; width: 40px;">
+        <img id="con-neutro2" src="con_derivacao.png" class="conector" style="top: 15%; left: 93.6%; width: 40px;">
 
         <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()">
         <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
@@ -77,13 +41,16 @@
         <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 64.5%; left: 57.5%; width: 65px;" onclick="toggleTecla(1)">
         <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 68.9%; left: 57.5%; width: 65px;" onclick="toggleTecla(2)">
 
+        <img id="lamp1" src="lamp_off.png" class="lampada" style="top: 45%; left: 72%; width: 60px;">
+        <img id="lamp2" src="lamp_off.png" class="lampada" style="top: 45%; left: 88%; width: 60px;">
+
         <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
         <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
     </div>
 
     <script>
         const coordenadasInstalacao = [
-            { id: 'REDEFASE',   cor: 'red',    a: { top: 39.2, left: 26.6 }, b: { top: 17, left: 99 } },
+            { id: 'REDEFASE',   cor: 'red',    a: { top: 38, left: 26 }, b: { top: 17, left: 99 } },
             { id: 'REDENEUTRO', cor: 'blue',   a: { top: 35, left: 44.5}, b: { top: 14, left: 99 } },
             { id: 'FASEINT',    cor: 'red',    a: { top: 19, left: 60 }, b: { top: 67, left: 58 } },
             { id: 'JUMP',       cor: 'red',    a: { top: 68, left: 56 }, b: { top: 72, left: 58 } },
@@ -110,14 +77,12 @@
                 verificarEnergia();
                 return;
             }
-
             const item = coordenadasInstalacao[passoAtivo];
             if (item.id === 'FASEINT') document.getElementById('con-fase').style.display = 'block';
             else if (item.id === 'NEUTROL1') document.getElementById('con-neutro1').style.display = 'block';
             else if (item.id === 'NEUTROL2') document.getElementById('con-neutro2').style.display = 'block';
 
             document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": " + item.id;
-            
             const pA = document.getElementById('ponto-A');
             pA.style.top = item.a.top + "%"; pA.style.left = item.a.left + "%";
             pA.style.backgroundColor = item.cor; pA.style.display = "block";
@@ -131,14 +96,8 @@
         }
 
         function cliquePonto(tipo) {
-            if (tipo === 'A') {
-                pA_ok = true;
-                document.getElementById('ponto-A').classList.add('ponto-verde');
-                document.getElementById('ponto-B').style.display = "block";
-            } else if (tipo === 'B' && pA_ok) {
-                document.getElementById('ponto-B').classList.add('ponto-verde');
-                processarCabo();
-            }
+            if (tipo === 'A') { pA_ok = true; document.getElementById('ponto-A').classList.add('ponto-verde'); document.getElementById('ponto-B').style.display = "block"; }
+            else if (tipo === 'B' && pA_ok) { document.getElementById('ponto-B').classList.add('ponto-verde'); processarCabo(); }
         }
 
         async function processarCabo() {
@@ -152,17 +111,8 @@
             setTimeout(carregarPasso, 500);
         }
 
-        function toggleDG() {
-            dgLigado = !dgLigado;
-            document.getElementById('al-dg').src = dgLigado ? 'al_dg_on.png' : 'al_dg_off.png';
-            verificarEnergia();
-        }
-
-        function toggleDR() {
-            drLigado = !drLigado;
-            document.getElementById('al-dr').src = drLigado ? 'al_dr_on.png' : 'al_dr_off.png';
-            verificarEnergia();
-        }
+        function toggleDG() { dgLigado = !dgLigado; document.getElementById('al-dg').src = dgLigado ? 'al_dg_on.png' : 'al_dg_off.png'; verificarEnergia(); }
+        function toggleDR() { drLigado = !drLigado; document.getElementById('al-dr').src = drLigado ? 'al_dr_on.png' : 'al_dr_off.png'; verificarEnergia(); }
 
         function toggleTecla(num) {
             if (num === 1) {
@@ -177,12 +127,29 @@
 
         function verificarEnergia() {
             const painel = document.getElementById('msg');
-            if (passoAtivo >= coordenadasInstalacao.length) {
-                if (dgLigado && drLigado) {
+            const l1 = document.getElementById('lamp1');
+            const l2 = document.getElementById('lamp2');
+            
+            // Condição 1: Fiação pronta?
+            const fiacaoPronta = passoAtivo >= coordenadasInstalacao.length;
+            // Condição 2: Proteções ligadas?
+            const energiaNoBarramento = dgLigado && drLigado;
+
+            if (fiacaoPronta) {
+                if (energiaNoBarramento) {
                     painel.innerHTML = "<span style='color:#00ff00'>SISTEMA ENERGIZADO - OK</span>";
+                    // Condição 3: Interruptores mandando fase para as lâmpadas?
+                    l1.src = tecla1Ligada ? 'lamp_on.png' : 'lamp_off.png';
+                    l2.src = tecla2Ligada ? 'lamp_on.png' : 'lamp_off.png';
                 } else {
                     painel.innerHTML = "<span style='color:#ff0000'> CIRCUITO SECCIONADO</span>";
+                    l1.src = 'lamp_off.png';
+                    l2.src = 'lamp_off.png';
                 }
+            } else {
+                // Se a fiação não acabou, as lâmpadas nunca acendem
+                l1.src = 'lamp_off.png';
+                l2.src = 'lamp_off.png';
             }
         }
 
