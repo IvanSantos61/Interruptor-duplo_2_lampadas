@@ -4,45 +4,65 @@
     <meta charset="UTF-8">
     <title>Ajuste de Coordenadas - SMT Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    /* 1. Reset agressivo: adicione o seletor 'html' e garanta fundo escuro */
-    html, body { 
-        margin: 0; 
-        padding: 0; 
-        background: #060b13; /* Se o fundo do navegador for branco, qualquer brecha brilha */
-        width: 100%;
-        min-height: 100vh;
-    }
+    <style>
+        /* 1. RESET REAL: Garante fundo escuro em todo o navegador para sumir com frestas brancas */
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            background: #060b13; 
+            width: 100%;
+            min-height: 100vh;
+        }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            color: white; 
+            font-family: 'Orbitron', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px; 
+        }
+        
+        #container-simulador { 
+            position: relative; 
+            width: 1000px; 
+            height: 600px; 
+            background: url('ambiente.jpg') no-repeat center center; 
+            background-size: contain;
+            border: 2px solid #1a2a44;
+        }
 
-    body { 
-        color: white; 
-        font-family: 'Orbitron', sans-serif; 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        padding: 20px; 
-    }
+        /* 2. CORREÇÃO DA MOLDURA: Força as imagens a ignorarem espaçamentos de bloco padrão */
+        .camada-cabo { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            pointer-events: none; 
+            z-index: 10; 
+            display: block;
+        }
 
-    #container-simulador { 
-        position: relative; 
-        width: 1000px; 
-        height: 600px; 
-        background: url('ambiente.jpg') no-repeat center center; 
-        background-size: contain;
-        border: 2px solid #1a2a44;
-        /* 2. Remova o espaço de linha que imagens geram */
-        line-height: 0; 
-        font-size: 0;
-        /* 3. Garanta que nada saia das bordas */
-        overflow: hidden;
-    }
+        /* Estilo das Bolinhas (Voltou ao normal) */
+        .ponto-conexao {
+            position: absolute; 
+            width: 20px; 
+            height: 20px; 
+            border-radius: 50%;
+            border: 2px solid #fff; 
+            z-index: 150; 
+            cursor: pointer;
+            display: none;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #000;
+        }
+        .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
 
-    /* Restante do seu código permanece igual */
-    .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
-    /* ... */
-</style>
+        #painel-status { margin-bottom: 15px; color: #00f0ff; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
+    </style>
 </head>
 <body>
 
@@ -63,6 +83,9 @@
     </div>
 
     <script>
+        /* ============================================================
+           TABELA DE COORDENADAS (Suas coordenadas salvas e prontas)
+           ============================================================ */
         const coordenadasInstalacao = [
             { id: 'REDEFASE',   cor: 'red',    a: { top: 38, left: 26  }, b: { top: 17, left: 99 } },
             { id: 'REDENEUTRO', cor: 'blue',   a: { top: 35, left: 44.5}, b: { top: 14, left: 99 } },
@@ -76,12 +99,7 @@
 
         let passoAtivo = 0;
         let pA_ok = false;
-        
-        // Padronizado com 'L' para bater com as pastas de imagem
-        const totalFrames = { 
-            REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, 
-            RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 20 
-        };
+        const totalFrames = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 20 };
 
         function carregarPasso() {
             if (passoAtivo >= coordenadasInstalacao.length) {
@@ -123,14 +141,8 @@
         async function processarCabo() {
             const id = coordenadasInstalacao[passoAtivo].id;
             const img = document.getElementById(id);
-            const frames = totalFrames[id];
             
-            if (!frames) {
-                console.error("Erro: Frames não definidos para o ID " + id);
-                return;
-            }
-
-            for (let i = 1; i <= frames; i++) {
+            for (let i = 1; i <= totalFrames[id]; i++) {
                 img.src = `${id}/quadro${String(i).padStart(3, '0')}.png`;
                 await new Promise(r => setTimeout(r, 20));
             }
