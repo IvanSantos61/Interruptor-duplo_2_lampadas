@@ -84,29 +84,41 @@
 
         const totalFrames = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 25 };
 
-        function carregarPasso() {
-            if (passoAtivo >= coordenadasInstalacao.length) {
-                document.getElementById('msg').innerHTML = "MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O SISTEMA.</span>";
-                document.getElementById('ponto-A').style.display = 'none';
-                document.getElementById('ponto-B').style.display = 'none';
-                verificarEnergia();
-                return;
-            }
-            const item = coordenadasInstalacao[passoAtivo];
-            if (item.id === 'FASEINT') document.getElementById('con-fase').style.display = 'block';
-            else if (item.id === 'NEUTROL1') document.getElementById('con-neutro1').style.display = 'block';
-            else if (item.id === 'NEUTROL2') document.getElementById('con-neutro2').style.display = 'block';
+      function carregarPasso() {
+    if (passoAtivo >= coordenadasInstalacao.length) {
+        document.getElementById('msg').innerHTML = "MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O SISTEMA.</span>";
+        document.getElementById('ponto-A').style.display = 'none';
+        document.getElementById('ponto-B').style.display = 'none';
+        verificarEnergia();
+        return;
+    }
+    const item = coordenadasInstalacao[passoAtivo];
+    
+    // Lógica dos conectores
+    if (item.id === 'FASEINT') document.getElementById('con-fase').style.display = 'block';
+    else if (item.id === 'NEUTROL1') document.getElementById('con-neutro1').style.display = 'block';
+    else if (item.id === 'NEUTROL2') document.getElementById('con-neutro2').style.display = 'block';
 
-            document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": " + item.id;
-            const pA = document.getElementById('ponto-A');
-            pA.style.top = item.a.top + "%"; pA.style.left = item.a.left + "%";
-            pA.style.backgroundColor = item.cor; pA.style.display = "block";
-            
-            const pB = document.getElementById('ponto-B');
-            pB.style.top = item.b.top + "%"; pB.style.left = item.b.left + "%";
-            pB.style.backgroundColor = item.cor; pB.style.display = "none";
-            pA_ok = false;
-        }
+    document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": " + item.id;
+    
+    // CONFIGURAÇÃO PONTO A
+    const pA = document.getElementById('ponto-A');
+    pA.style.top = item.a.top + "%"; 
+    pA.style.left = item.a.left + "%";
+    pA.classList.remove('ponto-verde'); // Remove o verde do passo anterior
+    pA.style.backgroundColor = item.cor; // Aplica a cor do cabo atual (red, blue, yellow)
+    pA.style.display = "block";
+    
+    // CONFIGURAÇÃO PONTO B
+    const pB = document.getElementById('ponto-B');
+    pB.style.top = item.b.top + "%"; 
+    pB.style.left = item.b.left + "%";
+    pB.classList.remove('ponto-verde'); // Remove o verde do passo anterior
+    pB.style.backgroundColor = item.cor; // Aplica a cor do cabo atual
+    pB.style.display = "none";
+    
+    pA_ok = false;
+}
 
         function cliquePonto(tipo) {
             if (tipo === 'A') { pA_ok = true; document.getElementById('ponto-A').classList.add('ponto-verde'); document.getElementById('ponto-B').style.display = "block"; }
