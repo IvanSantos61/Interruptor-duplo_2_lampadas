@@ -2,10 +2,10 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SMT Pro - Interruptor Duplo</title>
+    <title>SMT Pro - Fiação Completa no Fundo</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Reset total para eliminar molduras brancas */
+        /* Limpa qualquer margem ou moldura branca indesejada */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
@@ -15,13 +15,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
+            padding-top: 20px;
         }
 
         #painel-status {
             width: 100%;
             max-width: 1000px;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             color: #00f0ff;
             text-shadow: 0 0 10px #00f0ff;
@@ -31,14 +31,13 @@
 
         #container-simulador { 
             position: relative; 
-            width: 1000px; /* Largura padrão dos seus ambientes */
-            height: 600px; /* Altura padrão */
+            width: 1000px; /* Ajuste para o tamanho do seu ambiente.jpg se necessário */
+            height: 600px; 
             background: url('ambiente.jpg') no-repeat center center;
             background-size: contain;
-            line-height: 0;
         }
 
-        /* Camadas de cabos - Absolutas e transparentes */
+        /* Camadas transparentes de cabos empilhadas sobre o fundo */
         .camada-cabo { 
             position: absolute; 
             top: 0; 
@@ -49,24 +48,25 @@
             z-index: 10;
         }
 
-        /* Hotspots Invisíveis para as teclas */
+        /* Hotspots das Teclas S1 e S2 */
         .tecla {
             position: absolute;
             z-index: 100;
             cursor: pointer;
-            border: 1px dashed rgba(0, 240, 255, 0.1); /* Quase invisível */
+            border: 1px dashed rgba(0, 240, 255, 0.2);
         }
         .tecla:hover { border: 1px solid #00f0ff; background: rgba(0, 240, 255, 0.05); }
 
-        .status-on { color: #00ff00; }
-        .status-off { color: #ff0000; }
+        .status-ligado { color: #00ff00; text-shadow: 0 0 8px #00ff00; }
+        .status-desligado { color: #ff0000; text-shadow: 0 0 8px #ff0000; }
     </style>
 </head>
 <body>
 
-    <div id="painel-status">SISTEMA SMT PRO: <span id="msg">INICIALIZANDO...</span></div>
+    <div id="painel-status">MONITORAMENTO SMT: <span id="msg">INICIANDO MONTAGEM...</span></div>
 
     <div id="container-simulador">
+        <!-- Todas as camadas que você listou prontas para receber os quadros -->
         <img id="REDEFASE" class="camada-cabo">
         <img id="REDENEUTRO" class="camada-cabo">
         <img id="FASEINT" class="camada-cabo">
@@ -76,64 +76,74 @@
         <img id="NEUTROL1" class="camada-cabo">
         <img id="NEUTROL2" class="camada-cabo">
 
-        <div class="tecla" style="top: 45%; left: 44%; width: 35px; height: 55px;" onclick="toggle(1)"></div>
-        <div class="tecla" style="top: 45%; left: 49%; width: 35px; height: 55px;" onclick="toggle(2)"></div>
+        <!-- Áreas de clique do interruptor duplo -->
+        <div class="tecla" style="top: 45%; left: 44%; width: 35px; height: 55px;" onclick="testarInterruptor(1)"></div>
+        <div class="tecla" style="top: 45%; left: 49%; width: 35px; height: 55px;" onclick="testarInterruptor(2)"></div>
     </div>
 
     <script>
-        const frames = {
-            REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10,
-            RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 20
+        // Mapeamento exato das suas pastas e quantidade de quadros do GitHub
+        const sequencias = {
+            REDEFASE: 96,
+            REDENEUTRO: 115,
+            FASEINT: 43,
+            JUMP: 10,
+            RETORNO1: 54,
+            RETORNO2: 45,
+            NEUTROL1: 25,
+            NEUTROL2: 20
         };
 
-        let ligado1 = false;
-        let ligado2 = false;
-
-        async function animar(pasta) {
-            const img = document.getElementById(pasta);
-            const total = frames[pasta];
-            for (let i = 1; i <= total; i++) {
-                let f = String(i).padStart(3, '0');
-                img.src = `${pasta}/quadro${f}.png`;
-                await new Promise(r => setTimeout(r, 25));
+        // Função que renderiza os cabos na tela quadro a quadro
+        async function desenharCabo(idPasta) {
+            const imgElemento = document.getElementById(idPasta);
+            const totalQuadros = sequencias[idPasta];
+            
+            for (let i = 1; i <= totalQuadros; i++) {
+                let frame = String(i).padStart(3, '0');
+                imgElemento.src = `${idPasta}/quadro${frame}.png`;
+                await new Promise(resolve => setTimeout(resolve, 20)); // Velocidade da animação
             }
         }
 
-        async function toggle(id) {
-            const msg = document.getElementById('msg');
+        // FUNÇÃO PRINCIPAL: Carrega TODOS os cabos automaticamente na tela
+        async function montarInfraestruturaCompleta() {
+            const statusMsg = document.getElementById('msg');
+
+            statusMsg.innerText = "ALIMENTANDO REDE PRINCIPAL...";
+            await desenharCabo('REDEFASE');
+            await desenharCabo('REDENEUTRO');
+
+            statusMsg.innerText = "CONECTANDO CIRCUITO DO INTERRUPTOR...";
+            await desenharCabo('FASEINT');
+            await desenharCabo('JUMP');
+
+            statusMsg.innerText = "PASSANDO RETORNOS E NEUTROS DAS LÂMPADAS...";
+            await desenharCabo('RETORNO1');
+            await desenharCabo('RETORNO2');
+            await desenharCabo('NEUTROL1');
+            await desenharCabo('NEUTROL2');
+
+            statusMsg.innerText = "SISTEMA COMPLETAMENTE INSTALADO E ENERGIZADO!";
+        }
+
+        // Lógica de teste para o clique nos interruptores
+        let s1 = false;
+        let s2 = false;
+
+        function testarInterruptor(id) {
+            const statusMsg = document.getElementById('msg');
             if (id === 1) {
-                ligado1 = !ligado1;
-                if (ligado1) {
-                    msg.innerHTML = "CIRC 1 <span class='status-on'>LIGADO</span>";
-                    animar('NEUTROL1');
-                    await animar('RETORNO1');
-                } else {
-                    msg.innerHTML = "CIRC 1 <span class='status-off'>OFF</span>";
-                    document.getElementById('RETORNO1').src = "";
-                    document.getElementById('NEUTROL1').src = "";
-                }
+                s1 = !s1;
+                statusMsg.innerHTML = s1 ? "INTERRUPTOR 1: <span class='status-ligado'>LIGADO (LÂMPADA 1 ACESA)</span>" : "INTERRUPTOR 1: <span class='status-desligado'>DESLIGADO</span>";
             } else {
-                ligado2 = !ligado2;
-                if (ligado2) {
-                    msg.innerHTML = "CIRC 2 <span class='status-on'>LIGADO</span>";
-                    animar('NEUTROL2');
-                    await animar('RETORNO2');
-                } else {
-                    msg.innerHTML = "CIRC 2 <span class='status-off'>OFF</span>";
-                    document.getElementById('RETORNO2').src = "";
-                    document.getElementById('NEUTROL2').src = "";
-                }
+                s2 = !s2;
+                statusMsg.innerHTML = s2 ? "INTERRUPTOR 2: <span class='status-ligado'>LIGADO (LÂMPADA 2 ACESA)</span>" : "INTERRUPTOR 2: <span class='status-desligado'>DESLIGADO</span>";
             }
         }
 
-        // Distribuição Inicial
-        window.onload = async () => {
-            await animar('REDEFASE');
-            await animar('REDENEUTRO');
-            await animar('FASEINT');
-            await animar('JUMP');
-            document.getElementById('msg').innerText = "SISTEMA PRONTO";
-        };
+        // Executa a montagem total assim que a página carrega
+        window.onload = montarInfraestruturaCompleta;
     </script>
 </body>
 </html>
