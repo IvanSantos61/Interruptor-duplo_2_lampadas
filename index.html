@@ -4,37 +4,45 @@
     <meta charset="UTF-8">
     <title>Ajuste de Coordenadas - SMT Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #060b13; color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        
-        #container-simulador { 
-            position: relative; 
-            width: 1000px; 
-            height: 600px; 
-            background: url('ambiente.jpg') no-repeat center center; 
-            background-size: contain;
-            border: 2px solid #1a2a44;
-        }
+  <style>
+    /* 1. Reset agressivo: adicione o seletor 'html' e garanta fundo escuro */
+    html, body { 
+        margin: 0; 
+        padding: 0; 
+        background: #060b13; /* Se o fundo do navegador for branco, qualquer brecha brilha */
+        width: 100%;
+        min-height: 100vh;
+    }
 
-        .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .ponto-conexao {
-            position: absolute; 
-            width: 20px; 
-            height: 20px; 
-            border-radius: 50%;
-            border: 2px solid #fff; 
-            z-index: 150; 
-            cursor: pointer;
-            display: none;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px #000;
-        }
-        .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
+    body { 
+        color: white; 
+        font-family: 'Orbitron', sans-serif; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        padding: 20px; 
+    }
 
-        #painel-status { margin-bottom: 15px; color: #00f0ff; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
-    </style>
+    #container-simulador { 
+        position: relative; 
+        width: 1000px; 
+        height: 600px; 
+        background: url('ambiente.jpg') no-repeat center center; 
+        background-size: contain;
+        border: 2px solid #1a2a44;
+        /* 2. Remova o espaço de linha que imagens geram */
+        line-height: 0; 
+        font-size: 0;
+        /* 3. Garanta que nada saia das bordas */
+        overflow: hidden;
+    }
+
+    /* Restante do seu código permanece igual */
+    .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+    /* ... */
+</style>
 </head>
 <body>
 
