@@ -2,71 +2,48 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Ajuste de Coordenadas - SMT Pro</title>
+    <title>SMT Pro - Laboratório de Instalação</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* 1. RESET REAL: Garante fundo escuro em todo o navegador para sumir com frestas brancas */
+        /* RESET PARA ELIMINAR MOLDURAS */
         html, body { 
-            margin: 0; 
-            padding: 0; 
-            background: #060b13; 
-            width: 100%;
-            min-height: 100vh;
+            margin: 0; padding: 0; background: #060b13; 
+            width: 100%; min-height: 100vh; 
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            color: white; 
-            font-family: 'Orbitron', sans-serif; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 20px; 
+            color: white; font-family: 'Orbitron', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; padding: 20px; 
         }
         
         #container-simulador { 
-            position: relative; 
-            width: 1000px; 
-            height: 600px; 
+            position: relative; width: 1000px; height: 600px; 
             background: url('ambiente.jpg') no-repeat center center; 
-            background-size: contain;
-            border: 2px solid #1a2a44;
+            background-size: contain; border: 2px solid #1a2a44;
         }
 
-        /* 2. CORREÇÃO DA MOLDURA: Força as imagens a ignorarem espaçamentos de bloco padrão */
         .camada-cabo { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            pointer-events: none; 
-            z-index: 10; 
-            display: block;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            pointer-events: none; z-index: 10; display: block;
         }
 
-        /* Estilo das Bolinhas (Voltou ao normal) */
         .ponto-conexao {
-            position: absolute; 
-            width: 20px; 
-            height: 20px; 
-            border-radius: 50%;
-            border: 2px solid #fff; 
-            z-index: 150; 
-            cursor: pointer;
-            display: none;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px #000;
+            position: absolute; width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid #fff; z-index: 150; cursor: pointer;
+            display: none; transform: translate(-50%, -50%);
+            box-shadow: 0 0 12px #000;
         }
         .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
+
+        .alavanca { position: absolute; z-index: 120; cursor: pointer; width: 35px; }
 
         #painel-status { margin-bottom: 15px; color: #00f0ff; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <div id="painel-status">MODO DE AJUSTE: <span id="msg">CARREGANDO...</span></div>
+    <div id="painel-status">MODO DE INSTALAÇÃO: <span id="msg">INICIANDO...</span></div>
 
     <div id="container-simulador">
         <img id="REDEFASE" class="camada-cabo">
@@ -78,38 +55,42 @@
         <img id="NEUTROL1" class="camada-cabo">
         <img id="NEUTROL2" class="camada-cabo">
 
+        <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 35%; left: 26%;" onclick="toggleDG()">
+        <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 35%; left: 42%; width: 55px;" onclick="toggleDR()">
+
         <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
         <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
     </div>
 
     <script>
-        /* ============================================================
-           TABELA DE COORDENADAS (Suas coordenadas salvas e prontas)
-           ============================================================ */
         const coordenadasInstalacao = [
-            { id: 'REDEFASE',   cor: 'red',    a: { top: 38, left: 26  }, b: { top: 17, left: 99 } },
+            { id: 'REDEFASE',   cor: 'red',    a: { top: 38, left: 26 }, b: { top: 17, left: 99 } },
             { id: 'REDENEUTRO', cor: 'blue',   a: { top: 35, left: 44.5}, b: { top: 14, left: 99 } },
             { id: 'FASEINT',    cor: 'red',    a: { top: 19, left: 60 }, b: { top: 67, left: 58 } },
             { id: 'JUMP',       cor: 'red',    a: { top: 68, left: 56 }, b: { top: 72, left: 58 } },
-            { id: 'RETORNO1',   cor: 'yellow', a: { top: 68.0, left: 64.0 }, b: { top: 55.0, left: 89.7 } },
-            { id: 'RETORNO2',   cor: 'yellow', a: { top: 73, left: 64 }, b: { top: 55.0, left: 75 } },
-            { id: 'NEUTROL1',   cor: 'blue',   a: { top: 14.0, left: 76.0 }, b: { top: 55, left: 75.0 } },
-            { id: 'NEUTROL2',   cor: 'blue',   a: { top: 14, left: 932.0 }, b: { top: 96, left: 91.5 } }
+            { id: 'RETORNO1',   cor: 'yellow', a: { top: 68, left: 64 }, b: { top: 55, left: 89.7 } },
+            { id: 'RETORNO2',   cor: 'yellow', a: { top: 73, left: 64 }, b: { top: 55, left: 75 } },
+            { id: 'NEUTROL1',   cor: 'blue',   a: { top: 14, left: 76 }, b: { top: 55, left: 75 } },
+            { id: 'NEUTROL2',   cor: 'blue',   a: { top: 14, left: 93 }, b: { top: 96, left: 91.5 } } // Ajustado para 93
         ];
 
         let passoAtivo = 0;
         let pA_ok = false;
+        let dgLigado = false;
+        let drLigado = false;
+
         const totalFrames = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 20 };
 
         function carregarPasso() {
             if (passoAtivo >= coordenadasInstalacao.length) {
-                document.getElementById('msg').innerText = "INSTALAÇÃO COMPLETA!";
+                document.getElementById('msg').innerHTML = "MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O DG E O DR.</span>";
+                document.getElementById('ponto-A').style.display = 'none';
+                document.getElementById('ponto-B').style.display = 'none';
                 return;
             }
-
             const item = coordenadasInstalacao[passoAtivo];
-            document.getElementById('msg').innerText = "CONECTE: " + item.id;
-
+            document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": " + item.id;
+            
             const pA = document.getElementById('ponto-A');
             pA.style.top = item.a.top + "%";
             pA.style.left = item.a.left + "%";
@@ -123,7 +104,6 @@
             pB.style.backgroundColor = item.cor;
             pB.style.display = "none";
             pB.classList.remove('ponto-verde');
-
             pA_ok = false;
         }
 
@@ -141,14 +121,35 @@
         async function processarCabo() {
             const id = coordenadasInstalacao[passoAtivo].id;
             const img = document.getElementById(id);
-            
             for (let i = 1; i <= totalFrames[id]; i++) {
                 img.src = `${id}/quadro${String(i).padStart(3, '0')}.png`;
                 await new Promise(r => setTimeout(r, 20));
             }
-
             passoAtivo++;
-            setTimeout(carregarPasso, 600);
+            setTimeout(carregarPasso, 500);
+        }
+
+        function toggleDG() {
+            dgLigado = !dgLigado;
+            document.getElementById('al-dg').src = dgLigado ? 'al_dg_on.png' : 'al_dg_off.png';
+            verificarEnergia();
+        }
+
+        function toggleDR() {
+            drLigado = !drLigado;
+            document.getElementById('al-dr').src = drLigado ? 'al_dr_on.png' : 'al_dr_off.png';
+            verificarEnergia();
+        }
+
+        function verificarEnergia() {
+            if (passoAtivo >= coordenadasInstalacao.length) {
+                const painel = document.getElementById('msg');
+                if (dgLigado && drLigado) {
+                    painel.innerHTML = "<span style='color:#00ff00'>SISTEMA ENERGIZADO - OK</span>";
+                } else {
+                    painel.innerHTML = "<span style='color:#ff0000'> CIRCUITO SECCIONADO</span>";
+                }
+            }
         }
 
         window.onload = carregarPasso;
