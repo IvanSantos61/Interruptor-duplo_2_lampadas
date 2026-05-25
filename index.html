@@ -2,97 +2,55 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laboratório SMT Pro - Duplo</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS REPLICADO DO SEU TRECHO */
+        /* Estilo base replicado do seu Laboratório */
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #060b13; color: white; display: flex; 
-            flex-direction: column; align-items: center; padding: 20px; margin: 0; overflow-x: hidden;
+            font-family: 'Segoe UI', sans-serif; background: #060b13; color: white; 
+            display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px;
         }
 
-        h1 {
-            color: #00f0ff; text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
-            font-size: 2.5em; margin-bottom: 20px; letter-spacing: 2px; text-transform: uppercase;
-            font-family: 'Orbitron', sans-serif;
-        }
+        h1 { font-family: 'Orbitron'; color: #00f0ff; text-shadow: 0 0 15px #00f0ff; text-transform: uppercase; }
 
-        /* --- TELA DE ENTRADA --- */
-        #tela-entrada {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: #060b13; z-index: 1000; display: flex; 
-            align-items: center; justify-content: center;
-        }
-
-        .moldura-entrada {
-            width: 80%; max-width: 900px; padding: 40px;
-            border: 3px solid #00f0ff; border-radius: 25px;
-            box-shadow: 0 0 50px rgba(0, 240, 255, 0.4); text-align: center;
-        }
-
-        .titulo-entrada { color: #00f0ff; font-size: 38px; text-transform: uppercase; text-shadow: 0 0 25px rgba(0, 240, 255, 0.6); margin: 10px 0; }
-        .subtitulo-entrada { color: #00f0ff; font-size: 20px; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 40px; }
-
-        /* --- INTERFACE DO SIMULADOR --- */
-        #painel-status {
-            width: 90%; max-width: 1000px; background: rgba(0, 0, 0, 0.4); 
-            border: 1px solid #1a2a44; border-radius: 15px; padding: 20px; 
-            margin-bottom: 20px; text-align: center;
-        }
-
-        #status-mensagem { 
-            font-family: 'Orbitron', sans-serif; font-size: 1.2em; color: #ffffff; 
-            text-transform: uppercase; 
-        }
-
+        /* Container do Simulador */
         #container-simulador { 
-            position: relative; line-height: 0; border-radius: 10px; 
-            overflow: hidden; border: 2px solid #1a2a44;
+            position: relative; line-height: 0; border: 2px solid #1a2a44; 
+            border-radius: 10px; overflow: hidden; background: #000;
         }
 
-        #fundo { max-width: 1000px; height: auto; display: block; }
+        #fundo { max-width: 1000px; height: auto; display: block; opacity: 0.8; }
 
-        /* CAMADAS DE CABOS QUADRO A QUADRO */
+        /* Camadas de Imagens dos Cabos */
         .camada-cabo { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            pointer-events: none; z-index: 10; 
+            pointer-events: none; z-index: 10; display: none; /* Começam ocultas */
         }
 
-        /* BOTÕES INTERATIVOS (TECLAS S1 E S2) */
-        .area-interativa {
+        /* Áreas de Clique (Hotspots das Teclas) */
+        .tecla-hotspot {
             position: absolute; z-index: 100; cursor: pointer;
-            border: 1px dashed rgba(0, 240, 255, 0.3); transition: 0.3s;
+            border: 1px dashed rgba(0, 240, 255, 0.2);
         }
-        .area-interativa:hover { background: rgba(0, 240, 255, 0.1); border-color: #00f0ff; }
+        .tecla-hotspot:hover { background: rgba(0, 240, 255, 0.1); border-color: #00f0ff; }
 
-        /* Estilo dos Hotspots/Baloes do seu codigo */
-        .btn-iniciar-lab {
-            background: transparent; border: 2px solid #00f0ff; border-radius: 50px;
-            color: #00f0ff; font-size: 16px; font-weight: bold; padding: 12px 35px;
-            cursor: pointer; animation: pulsarBotao 1.5s infinite;
+        /* Painel de Status */
+        #painel-status {
+            width: 90%; max-width: 1000px; background: rgba(0,0,0,0.5);
+            border: 1px solid #1a2a44; padding: 20px; margin-bottom: 20px;
+            font-family: 'Orbitron'; text-align: center; border-radius: 15px;
         }
-        @keyframes pulsarBotao { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
 
+        .status-on { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+        .status-off { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
     </style>
 </head>
 <body>
 
-    <div id="tela-entrada">
-        <div class="moldura-entrada">
-            <div style="color: #008b8b; font-size: 20px;">LABORATÓRIO SMT PRO</div>
-            <h1 class="titulo-entrada">INTERRUPTOR DUPLO<br>PARA 2 LÂMPADAS</h1>
-            <h2 class="subtitulo-entrada">CIRCUITO MONOFÁSICO - 127V</h2>
-            <div style="color: #445566; margin-bottom: 30px;">© Desenvolvido por Ivan Santos - 2026</div>
-            <button class="btn-iniciar-lab" onclick="iniciarLaboratorio()">INICIAR LABORATÓRIO</button>
-        </div>
-    </div>
-
     <h1>LABORATÓRIO SMT PRO</h1>
 
     <div id="painel-status">
-        <div id="status-mensagem">SISTEMA PRONTO: AGUARDANDO COMANDO</div>
+        <div id="status-mensagem">AGUARDANDO ENERGIZAÇÃO...</div>
     </div>
 
     <div id="container-simulador">
@@ -102,81 +60,74 @@
         <img id="REDENEUTRO" class="camada-cabo">
         <img id="FASEINT" class="camada-cabo">
         <img id="JUMP" class="camada-cabo">
+        
         <img id="RETORNO1" class="camada-cabo">
         <img id="RETORNO2" class="camada-cabo">
         <img id="NEUTROL1" class="camada-cabo">
         <img id="NEUTROL2" class="camada-cabo">
 
-        <div id="hotspot-s1" class="area-interativa" style="top: 50%; left: 45%; width: 40px; height: 60px;" onclick="acionar(1)"></div>
-        <div id="hotspot-s2" class="area-interativa" style="top: 50%; left: 51%; width: 40px; height: 60px;" onclick="acionar(2)"></div>
+        <div class="tecla-hotspot" style="top: 48%; left: 45%; width: 35px; height: 50px;" onclick="acionar(1)"></div>
+        <div class="tecla-hotspot" style="top: 48%; left: 50%; width: 35px; height: 50px;" onclick="acionar(2)"></div>
     </div>
 
     <script>
-        const config = {
+        const totais = {
             REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10,
             RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 20
         };
 
-        function iniciarLaboratorio() {
-            document.getElementById('tela-entrada').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('tela-entrada').style.visibility = 'hidden';
-                status("ENERGIZANDO INFRAESTRUTURA...");
-                distribuirBase();
-            }, 500);
-        }
-
-        function status(msg, cor = "#fff") {
-            const el = document.getElementById('status-mensagem');
-            el.innerText = msg;
-            el.style.color = cor;
-        }
-
-        async function animarCabo(pasta, total) {
-            const img = document.getElementById(pasta);
-            for (let i = 1; i <= total; i++) {
+        // Função para animar a distribuição
+        async function rodarSequencia(id) {
+            const img = document.getElementById(id);
+            img.style.display = "block"; // Torna a camada visível
+            
+            for (let i = 1; i <= totais[id]; i++) {
                 let frame = String(i).padStart(3, '0');
-                img.src = `${pasta}/quadro${frame}.png`;
-                await new Promise(r => setTimeout(r, 30));
+                img.src = `${id}/quadro${frame}.png`;
+                await new Promise(r => setTimeout(r, 20)); // Velocidade da fiação
             }
         }
 
-        async function distribuirBase() {
-            await animarCabo('REDEFASE', config.REDEFASE);
-            await animarCabo('REDENEUTRO', config.REDENEUTRO);
-            await animarCabo('FASEINT', config.FASEINT);
-            await animarCabo('JUMP', config.JUMP);
-            status("LABORATÓRIO PRONTO PARA TESTES", "#00f0ff");
-        }
+        // Lógica de acionamento independente
+        let estado = { s1: false, s2: false };
 
-        let s1Ligado = false;
-        let s2Ligado = false;
-
-        async function acionar(num) {
-            if (num === 1) {
-                s1Ligado = !s1Ligado;
-                if(s1Ligado) {
-                    status("CIRCUITO 1: FECHADO", "#00ff00");
-                    animarCabo('NEUTROL1', config.NEUTROL1);
-                    await animarCabo('RETORNO1', config.RETORNO1);
+        async function acionar(n) {
+            const msg = document.getElementById('status-mensagem');
+            
+            if (n === 1) {
+                estado.s1 = !estado.s1;
+                if (estado.s1) {
+                    msg.innerHTML = "CIRCUITO 1: <span class='status-on'>LIGADO</span>";
+                    rodarSequencia('NEUTROL1');
+                    await rodarSequencia('RETORNO1');
                 } else {
-                    status("CIRCUITO 1: ABERTO", "#ff0000");
-                    document.getElementById('RETORNO1').src = "";
-                    document.getElementById('NEUTROL1').src = "";
+                    msg.innerHTML = "CIRCUITO 1: <span class='status-off'>DESLIGADO</span>";
+                    document.getElementById('RETORNO1').style.display = "none";
+                    document.getElementById('NEUTROL1').style.display = "none";
                 }
             } else {
-                s2Ligado = !s2Ligado;
-                if(s2Ligado) {
-                    status("CIRCUITO 2: FECHADO", "#00ff00");
-                    animarCabo('NEUTROL2', config.NEUTROL2);
-                    await animarCabo('RETORNO2', config.RETORNO2);
+                estado.s2 = !estado.s2;
+                if (estado.s2) {
+                    msg.innerHTML = "CIRCUITO 2: <span class='status-on'>LIGADO</span>";
+                    rodarSequencia('NEUTROL2');
+                    await rodarSequencia('RETORNO2');
                 } else {
-                    status("CIRCUITO 2: ABERTO", "#ff0000");
-                    document.getElementById('RETORNO2').src = "";
-                    document.getElementById('NEUTROL2').src = "";
+                    msg.innerHTML = "CIRCUITO 2: <span class='status-off'>DESLIGADO</span>";
+                    document.getElementById('RETORNO2').style.display = "none";
+                    document.getElementById('NEUTROL2').style.display = "none";
                 }
             }
         }
+
+        // Inicialização automática
+        window.onload = async () => {
+            document.getElementById('status-mensagem').innerText = "INSTALANDO REDE ELÉTRICA...";
+            await rodarSequencia('REDEFASE');
+            await rodarSequencia('REDENEUTRO');
+            await rodarSequencia('FASEINT');
+            await rodarSequencia('JUMP');
+            document.getElementById('status-mensagem').innerText = "SISTEMA PRONTO: ACIONE OS INTERRUPTORES";
+        };
     </script>
 </body>
 </html>
