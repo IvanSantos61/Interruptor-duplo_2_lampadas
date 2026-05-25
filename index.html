@@ -35,12 +35,11 @@
 
         .alavanca { position: absolute; z-index: 120; cursor: pointer; }
         
-        /* Estilo do Conector de Derivação */
-        #conector-derivacao {
+        /* Estilo dos Conectores de Derivação */
+        .conector {
             position: absolute;
-            z-index: 115; /* Atrás das bolinhas, mas à frente dos cabos base */
+            z-index: 115; /* À frente dos cabos, atrás das bolinhas */
             display: none; /* Inicia escondido */
-            width: 50px; /* Ajuste o tamanho conforme sua imagem */
             pointer-events: none;
         }
 
@@ -61,7 +60,9 @@
         <img id="NEUTROL1" class="camada-cabo">
         <img id="NEUTROL2" class="camada-cabo">
 
-        <img id="conector-derivacao" src="con_derivacao.png" style="top: 15%; left: 60%;">
+        <img id="con-fase" src="con_derivacao.png" class="conector" style="top: 15%; left: 60%; width: 40px;">
+        <img id="con-neutro1" src="con_derivacao.png" class="conector" style="top: 15%; left: 75%; width: 40px;">
+        <img id="con-neutro2" src="con_derivacao.png" class="conector" style="top: 15%; left: 90%; width: 40px;">
 
         <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()">
         <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
@@ -90,19 +91,24 @@
         const totalFrames = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 25 };
 
         function carregarPasso() {
-            // Lógica para mostrar o conector de derivação antes do FASEINT (Passo 3 / Índice 2)
-            if (passoAtivo >= 2) {
-                document.getElementById('conector-derivacao').style.display = 'block';
-            }
-
             if (passoAtivo >= coordenadasInstalacao.length) {
                 document.getElementById('msg').innerHTML = "MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O DG E O DR.</span>";
                 document.getElementById('ponto-A').style.display = 'none';
                 document.getElementById('ponto-B').style.display = 'none';
                 return;
             }
-            
+
             const item = coordenadasInstalacao[passoAtivo];
+
+            // Lógica de ativação dos conectores baseada no ID do cabo
+            if (item.id === 'FASEINT') {
+                document.getElementById('con-fase').style.display = 'block';
+            } else if (item.id === 'NEUTROL1') {
+                document.getElementById('con-neutro1').style.display = 'block';
+            } else if (item.id === 'NEUTROL2') {
+                document.getElementById('con-neutro2').style.display = 'block';
+            }
+
             document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": " + item.id;
             
             const pA = document.getElementById('ponto-A');
