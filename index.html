@@ -1,1 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>SMT Pro - Simulador de Instalação Realista</title>
+    <style>
+        body { background-color: #121212; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; }
+        
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #121212; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 100;
+        }
 
+        .bar-container { width: 300px; height: 10px; background: #333; border-radius: 5px; margin-top: 10px; }
+        #bar { width: 0%; height: 100%; background: #00ffff; border-radius: 5px; transition: width 0.1s; }
+
+        #canvas-container {
+            position: relative; width: 1000px; height: 600px; /* Ajuste ao seu ambiente.jpg */
+            margin: 20px auto; background: url('ambiente.jpg') no-repeat center;
+            background-size: contain; border: 2px solid #333;
+        }
+
+        .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+        .painel-controles { display: flex; justify-content: center; gap: 15px; padding: 20px; }
+        
+        .btn-smt {
+            padding: 12px 20px; background: #222; color: #FFD700; 
+            border: 2px solid #FFD700; cursor: pointer; font-weight: bold;
+            text-transform: uppercase; border-radius: 4px;
+        }
+
+        .btn-smt:disabled { opacity: 0.3; cursor: not-allowed; }
+        .btn-smt.ligado { background: #00ffff; color: #000; border-color: #fff; box-shadow: 0 0 15px #00ffff; }
+    </style>
+</head>
+<body>
+
+<div id="loader">
+    <h2 id="status-txt" style="color: #FFD700;">CARREGANDO COMPONENTES...</h2>
+    <div class="bar-container"><div id="bar"></div></div>
+</div>
+
+<div id="canvas-container">
+    <img id="view-REDEFASE" class="camada-cabo">
+    <img id="view-REDENEUTRO" class="camada-cabo">
+    <img id="view-FASEINT" class="camada-cabo">
+    <img id="view-JUMP" class="camada-cabo">
+    <img id="view-NEUTROL1" class="camada-cabo">
+    <img id="view-NEUTROL2" class="camada-cabo">
+    <img id="view-RETORNO1" class="camada-cabo">
+    <img id="view-RETORNO2" class="camada-cabo">
+</div>
+
+<div class="painel-controles">
+    <button id="btn1" class="btn-smt" onclick="toggleCircuito(1)" disabled>Lâmpada 1</button>
+    <button id="btn2" class="btn-smt" onclick="toggleCircuito(2)" disabled>Lâmpada 2</button>
+</div>
+
+<script>
+    const configuracao = {
+        REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10,
+        NEUTROL1: 25, NEUTROL2: 20, RETORNO1: 54, RETORNO2: 45
+    };
+
+    const cacheImagens = {};
+    let imagensCarregadas = 0;
+    const totalImagens = Object.values(configuracao).reduce((a, b) => a + b, 0);
+
+    // 1. Função de Preload
+    function realizarPreload() {
+        Object.keys(configuracao).forEach(pasta => {
+            cacheImagens[pasta] = [];
+            for (let i = 1; i <= configuracao[pasta]; i++) {
+                const img = new Image();
+                const frame = String(i).padStart(3, '0');
+                img.src = `${pasta}/quadro${frame}.png`;
+                img.onload = () => {
+                    imagensCarregadas++;
+                    atualizarProgresso();
+                };
+                cacheImagens[pasta].push(img.src);
+            }
+        });
+    }
+
+    function atualizarProgresso() {
+        const percent = Math.floor((imagensCarregadas / totalImagens) * 100);
+        document.getElementById('bar').style.width = percent + '%';
+        if (imagensCarregadas === totalImagens) {
+            document.getElementById('loader').style.display = 'none';
+            document.querySelectorAll('.btn-smt').forEach(b => b.disabled = false);
+            iniciarInstalacaoBase();
+        }
+    }
+
+    // 2. Lógica de Animação
+    async function rodarSequencia(nome, reverso = false) {
+        const elemento = document.getElementById('view-' + nome);
+        const frames = cacheImagens[nome];
+        
+        if (!reverso) {
+            for (let i = 0; i < frames.length; i++) {
+                elemento.src = frames[i];
+                await new Promise(r => setTimeout(r, 25));
+            }
+        } else {
+            for (let i = frames.length - 1; i >= 0; i--) {
+                elemento.src = frames[i];
+                await new Promise(r => setTimeout(r, 15));
+            }
+            elemento.src = ""; // Limpa o frame ao desligar
+        }
+    }
+
+    // 3. Sequência Inicial (Energizando o Quadro)
+    async function iniciarInstalacaoBase() {
+        await rodarSequencia('REDEFASE');
+        await rodarSequencia('REDENEUTRO');
+        await rodarSequencia('FASEINT');
+        await rodarSequencia('JUMP');
+    }
+
+    // 4. Controle dos Interruptores
+    async function toggleCircuito(num) {
+        const btn = document.getElementById('btn' + num);
+        const isLigado = btn.classList.toggle('ligado');
+        
+        if (num === 1) {
+            if (isLigado) {
+                rodarSequencia('NEUTROL1');
+                await rodarSequencia('RETORNO1');
+            } else {
+                rodarSequencia('NEUTROL1', true);
+                rodarSequencia('RETORNO1', true);
+            }
+        } else {
+            if (isLigado) {
+                rodarSequencia('NEUTROL2');
+                await rodarSequencia('RETORNO2');
+            } else {
+                rodarSequencia('NEUTROL2', true);
+                rodarSequencia('RETORNO2', true);
+            }
+        }
+    }
+
+    window.onload = realizarPreload;
+</script>
+
+</body>
+</html>
