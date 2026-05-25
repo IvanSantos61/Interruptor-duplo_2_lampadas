@@ -35,7 +35,6 @@
 
         .alavanca { position: absolute; z-index: 120; cursor: pointer; }
 
-        /* Estilo das Teclas do Interruptor */
         .tecla {
             position: absolute;
             z-index: 110;
@@ -43,7 +42,6 @@
             display: block;
         }
         
-        /* Estilo dos Conectores de Derivação */
         .conector {
             position: absolute;
             z-index: 115;
@@ -75,8 +73,8 @@
         <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()">
         <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
 
-        <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 64.5%; left: 57.5%; width: 65px;" onclick="toggleTecla(1)">
-        <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 68.9%; left: 57.5%; width: 65px;" onclick="toggleTecla(2)">
+        <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 65.5%; left: 58.5%; width: 25px;" onclick="toggleTecla(1)">
+        <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 71.5%; left: 58.5%; width: 25px;" onclick="toggleTecla(2)">
 
         <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
         <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
@@ -108,33 +106,25 @@
                 document.getElementById('msg').innerHTML = "MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O SISTEMA.</span>";
                 document.getElementById('ponto-A').style.display = 'none';
                 document.getElementById('ponto-B').style.display = 'none';
+                verificarEnergia();
                 return;
             }
 
             const item = coordenadasInstalacao[passoAtivo];
-
-            if (item.id === 'FASEINT') {
-                document.getElementById('con-fase').style.display = 'block';
-            } else if (item.id === 'NEUTROL1') {
-                document.getElementById('con-neutro1').style.display = 'block';
-            } else if (item.id === 'NEUTROL2') {
-                document.getElementById('con-neutro2').style.display = 'block';
-            }
+            if (item.id === 'FASEINT') document.getElementById('con-fase').style.display = 'block';
+            else if (item.id === 'NEUTROL1') document.getElementById('con-neutro1').style.display = 'block';
+            else if (item.id === 'NEUTROL2') document.getElementById('con-neutro2').style.display = 'block';
 
             document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": " + item.id;
             
             const pA = document.getElementById('ponto-A');
-            pA.style.top = item.a.top + "%";
-            pA.style.left = item.a.left + "%";
-            pA.style.backgroundColor = item.cor;
-            pA.style.display = "block";
+            pA.style.top = item.a.top + "%"; pA.style.left = item.a.left + "%";
+            pA.style.backgroundColor = item.cor; pA.style.display = "block";
             pA.classList.remove('ponto-verde');
 
             const pB = document.getElementById('ponto-B');
-            pB.style.top = item.b.top + "%";
-            pB.style.left = item.b.left + "%";
-            pB.style.backgroundColor = item.cor;
-            pB.style.display = "none";
+            pB.style.top = item.b.top + "%"; pB.style.left = item.b.left + "%";
+            pB.style.backgroundColor = item.cor; pB.style.display = "none";
             pB.classList.remove('ponto-verde');
             pA_ok = false;
         }
@@ -173,15 +163,12 @@
             verificarEnergia();
         }
 
-        // Função atualizada com os seus nomes de arquivos
         function toggleTecla(num) {
-            // Só permite clicar após terminar a instalação
-            if (passoAtivo < coordenadasInstalacao.length) return;
-
+            // Agora a tecla alterna a imagem independente do passo da fiação
             if (num === 1) {
                 tecla1Ligada = !tecla1Ligada;
                 document.getElementById('tecla-l1').src = tecla1Ligada ? 'intum_on.png' : 'intum_off.png';
-            } else if (num === 2) {
+            } else {
                 tecla2Ligada = !tecla2Ligada;
                 document.getElementById('tecla-l2').src = tecla2Ligada ? 'intdois_on.png' : 'intdois_off.png';
             }
@@ -189,8 +176,10 @@
         }
 
         function verificarEnergia() {
+            const painel = document.getElementById('msg');
+            
+            // A mensagem de "Energizado" só aparece se a fiação acabou
             if (passoAtivo >= coordenadasInstalacao.length) {
-                const painel = document.getElementById('msg');
                 if (dgLigado && drLigado) {
                     painel.innerHTML = "<span style='color:#00ff00'>SISTEMA ENERGIZADO - OK</span>";
                 } else {
