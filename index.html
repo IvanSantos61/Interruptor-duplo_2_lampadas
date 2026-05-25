@@ -6,10 +6,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* RESET PARA ELIMINAR MOLDURAS */
-        html, body { 
-            margin: 0; padding: 0; background: #060b13; 
-            width: 100%; min-height: 100vh; 
-        }
+        html, body { margin: 0; padding: 0; background: #060b13; width: 100%; min-height: 100vh; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
@@ -36,7 +33,16 @@
         }
         .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
 
-        .alavanca { position: absolute; z-index: 120; cursor: pointer; width: 35px; }
+        .alavanca { position: absolute; z-index: 120; cursor: pointer; }
+        
+        /* Estilo do Conector de Derivação */
+        #conector-derivacao {
+            position: absolute;
+            z-index: 115; /* Atrás das bolinhas, mas à frente dos cabos base */
+            display: none; /* Inicia escondido */
+            width: 50px; /* Ajuste o tamanho conforme sua imagem */
+            pointer-events: none;
+        }
 
         #painel-status { margin-bottom: 15px; color: #00f0ff; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
     </style>
@@ -55,6 +61,8 @@
         <img id="NEUTROL1" class="camada-cabo">
         <img id="NEUTROL2" class="camada-cabo">
 
+        <img id="conector-derivacao" src="con_derivacao.png" style="top: 15%; left: 60%;">
+
         <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()">
         <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
 
@@ -71,7 +79,7 @@
             { id: 'RETORNO1',   cor: 'yellow', a: { top: 68, left: 64 }, b: { top: 55, left: 89.7 } },
             { id: 'RETORNO2',   cor: 'yellow', a: { top: 73, left: 64 }, b: { top: 55, left: 75 } },
             { id: 'NEUTROL1',   cor: 'blue',   a: { top: 14, left: 76 }, b: { top: 55, left: 75 } },
-            { id: 'NEUTROL2',   cor: 'blue',   a: { top: 14, left: 93 }, b: { top: 56, left: 91.5 } } // Ajustado para 93
+            { id: 'NEUTROL2',   cor: 'blue',   a: { top: 14, left: 93 }, b: { top: 56, left: 91.5 } }
         ];
 
         let passoAtivo = 0;
@@ -82,12 +90,18 @@
         const totalFrames = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 25 };
 
         function carregarPasso() {
+            // Lógica para mostrar o conector de derivação antes do FASEINT (Passo 3 / Índice 2)
+            if (passoAtivo >= 2) {
+                document.getElementById('conector-derivacao').style.display = 'block';
+            }
+
             if (passoAtivo >= coordenadasInstalacao.length) {
                 document.getElementById('msg').innerHTML = "MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O DG E O DR.</span>";
                 document.getElementById('ponto-A').style.display = 'none';
                 document.getElementById('ponto-B').style.display = 'none';
                 return;
             }
+            
             const item = coordenadasInstalacao[passoAtivo];
             document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": " + item.id;
             
