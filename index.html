@@ -19,7 +19,6 @@
 
         .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
 
-        /* Estilo das Bolinhas */
         .ponto-conexao {
             position: absolute; 
             width: 20px; 
@@ -27,9 +26,9 @@
             border-radius: 50%;
             border: 2px solid #fff; 
             z-index: 150; 
-            cursor: move; /* Cursor de ajuste */
+            cursor: pointer;
             display: none;
-            transform: translate(-50%, -50%); /* Centraliza o clique na bolinha */
+            transform: translate(-50%, -50%);
             box-shadow: 0 0 10px #000;
         }
         .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
@@ -48,31 +47,33 @@
         <img id="JUMP" class="camada-cabo">
         <img id="RETORNO1" class="camada-cabo">
         <img id="RETORNO2" class="camada-cabo">
-        <img id="NEUTRO1" class="camada-cabo">
-        <img id="NEUTRO2" class="camada-cabo">
+        <img id="NEUTROL1" class="camada-cabo">
+        <img id="NEUTROL2" class="camada-cabo">
 
         <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
         <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
     </div>
 
     <script>
-        /* ============================================================
-           TABELA DE COORDENADAS - AJUSTE AQUI (Valores em %)
-           ============================================================ */
         const coordenadasInstalacao = [
             { id: 'REDEFASE',   cor: 'red',    a: { top: 38, left: 26  }, b: { top: 17, left: 99 } },
             { id: 'REDENEUTRO', cor: 'blue',   a: { top: 35, left: 44.5}, b: { top: 14, left: 99 } },
             { id: 'FASEINT',    cor: 'red',    a: { top: 19, left: 60 }, b: { top: 67, left: 58 } },
             { id: 'JUMP',       cor: 'red',    a: { top: 68, left: 56 }, b: { top: 72, left: 58 } },
-            { id: 'RETORNO1',   cor: 'yellow',  a: { top: 68.0, left: 64.0 }, b: { top: 55.0, left: 89.7 } },
-            { id: 'RETORNO2',   cor: 'yellow',  a: { top: 73, left: 64 }, b: { top: 55.0, left: 73.3 } },
-            { id: 'NEUTRO1',    cor: 'blue',   a: { top: 20.0, left: 20.0 }, b: { top: 10.0, left: 70.0 } },
-            { id: 'NEUTRO2',    cor: 'blue',   a: { top: 20.0, left: 22.0 }, b: { top: 10.0, left: 80.0 } }
+            { id: 'RETORNO1',   cor: 'yellow', a: { top: 68.0, left: 64.0 }, b: { top: 55.0, left: 89.7 } },
+            { id: 'RETORNO2',   cor: 'yellow', a: { top: 73, left: 64 }, b: { top: 55.0, left: 73.3 } },
+            { id: 'NEUTROL1',   cor: 'blue',   a: { top: 20.0, left: 20.0 }, b: { top: 10.0, left: 70.0 } },
+            { id: 'NEUTROL2',   cor: 'blue',   a: { top: 20.0, left: 22.0 }, b: { top: 10.0, left: 80.0 } }
         ];
 
         let passoAtivo = 0;
         let pA_ok = false;
-        const totalFrames = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTRO1: 25, NEUTRO2: 20 };
+        
+        // Padronizado com 'L' para bater com as pastas de imagem
+        const totalFrames = { 
+            REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, 
+            RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 20 
+        };
 
         function carregarPasso() {
             if (passoAtivo >= coordenadasInstalacao.length) {
@@ -83,7 +84,6 @@
             const item = coordenadasInstalacao[passoAtivo];
             document.getElementById('msg').innerText = "CONECTE: " + item.id;
 
-            // Configura Ponto A
             const pA = document.getElementById('ponto-A');
             pA.style.top = item.a.top + "%";
             pA.style.left = item.a.left + "%";
@@ -91,7 +91,6 @@
             pA.style.display = "block";
             pA.classList.remove('ponto-verde');
 
-            // Configura Ponto B (escondido até clicar no A)
             const pB = document.getElementById('ponto-B');
             pB.style.top = item.b.top + "%";
             pB.style.left = item.b.left + "%";
@@ -116,8 +115,14 @@
         async function processarCabo() {
             const id = coordenadasInstalacao[passoAtivo].id;
             const img = document.getElementById(id);
+            const frames = totalFrames[id];
             
-            for (let i = 1; i <= totalFrames[id]; i++) {
+            if (!frames) {
+                console.error("Erro: Frames não definidos para o ID " + id);
+                return;
+            }
+
+            for (let i = 1; i <= frames; i++) {
                 img.src = `${id}/quadro${String(i).padStart(3, '0')}.png`;
                 await new Promise(r => setTimeout(r, 20));
             }
