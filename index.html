@@ -5,165 +5,73 @@
     <title>SMT Pro - FioCerto</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        html, body { 
-            margin: 0; padding: 0; background: #060b13; 
-            width: 100%; height: 100vh; overflow: hidden; 
-        }
+        html, body { margin: 0; padding: 0; background: #060b13; width: 100%; height: 100vh; overflow: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        #conteudo-lab { display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 30px; }
         
-        /* Reset agressivo para matar bordas e backgrounds fantasmas */
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            outline: none !important; 
-            border: none !important;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body { color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; }
-
-        /* --- TELA DE SPLASH --- */
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #060b13; z-index: 5000;
-            display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.6s ease;
-        }
-        .moldura-splash {
-            width: 900px; height: 500px;
-            border: 2px solid #00f0ff !important; border-radius: 30px;
-            box-shadow: 0 0 40px rgba(0, 240, 255, 0.4), inset 0 0 20px rgba(0, 240, 255, 0.1);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; background: #060b13;
-        }
-
-        /* --- INTERFACE PRINCIPAL --- */
-        #conteudo-lab { display: none; flex-direction: column; align-items: center; width: 100%; padding-top: 30px; }
-        
-        .titulo-principal {
-            color: #00f0ff; font-size: 38px; letter-spacing: 4px;
-            text-shadow: 0 0 15px rgba(0, 240, 255, 0.8);
-            margin-bottom: 30px; text-transform: uppercase;
-        }
-
-        /* Container do simulador totalmente limpo */
+        /* O Container agora é apenas um limitador de espaço */
         #container-simulador { 
             position: relative; 
             width: 1000px; 
             height: 600px; 
-            background: transparent url('ambiente.jpg') no-repeat center center; 
-            background-size: 100% 100%; 
+            background: #060b13; /* Fundo sólido para garantir o Dark */
             overflow: hidden;
-            /* Se houver moldura forçada, ela herdará o background do body */
         }
 
-        /* TRATAMENTO DE IMAGENS SEM SRC (O segredo da transparência) */
-        img { 
-            background-color: transparent !important;
-            color: transparent !important;
-            text-indent: -10000px; /* Esconde o texto alternativo/ícone de erro */
+        /* O FUNDO E OS CABOS SÃO DESENHADOS AQUI. 
+           Canvas não possui bordas padrão nem ícones de erro. */
+        #canvas-simulador {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background: transparent;
         }
 
-        /* Camadas de cabos: só aparecem quando o script der o comando */
-        .camada-cabo { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            pointer-events: none; z-index: 10; 
-            display: block; 
-            visibility: hidden; /* Fica oculto para o navegador não renderizar moldura de erro */
-        }
-
-        /* Outros elementos técnicos */
-        .ponto-conexao { position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff !important; z-index: 150; cursor: pointer; display: none; transform: translate(-50%, -50%); }
-        .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
-        .alavanca, .tecla { position: absolute; z-index: 110; cursor: pointer; }
-        .lampada-acesa { position: absolute; z-index: 105; pointer-events: none; display: none; }
-        .conector { position: absolute; z-index: 115; display: none; pointer-events: none; }
-
-        #tooltip { position: fixed; background: rgba(255, 255, 0, 0.95); color: #060b13; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: bold; pointer-events: none; display: none; z-index: 2000; border: 1px solid #fff !important; text-transform: uppercase; }
+        /* Os componentes interativos ficam por cima (z-index 10) */
+        .componente { position: absolute; z-index: 10; cursor: pointer; border: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="tooltip"></div>
-
-    <div id="splash-screen">
-        <div class="moldura-splash">
-            <h1 style="color:#00f0ff; font-size:45px;">LABORATÓRIO SMT PRO</h1>
-            <p style="color:#334455; font-size:11px; margin-top:50px;">© Ivan Santos - ConectaeadPLUS</p>
-            <button class="btn-iniciar" style="margin-top:30px; background:none; border:2px solid #00f0ff !important; color:#00f0ff; padding:15px 40px; border-radius:50px; cursor:pointer;" onclick="iniciarLaboratorio()">INICIAR</button>
-        </div>
-    </div>
-
     <div id="conteudo-lab">
-        <h1 class="titulo-principal">LABORATÓRIO SMT PRO</h1>
-
         <div id="container-simulador">
-            <img id="REDEFASE" class="camada-cabo">
-            <img id="REDENEUTRO" class="camada-cabo">
-            <img id="FASEINT" class="camada-cabo">
-            <img id="JUMP" class="camada-cabo">
-            <img id="RETORNO1" class="camada-cabo">
-            <img id="RETORNO2" class="camada-cabo">
-            <img id="NEUTROL1" class="camada-cabo">
-            <img id="NEUTROL2" class="camada-cabo">
+            <canvas id="canvas-simulador" width="1000" height="600"></canvas>
 
-            <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()">
-            <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
-            <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 64.5%; left: 57.5%; width: 65px;" onclick="toggleTecla(1)">
-            <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 68.9%; left: 57.5%; width: 65px;" onclick="toggleTecla(2)">
-
-            <img id="lamp1-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 66.6%; width: 170px;">
-            <img id="lamp2-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 82.9%; width: 170px;">
-
-            <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
-            <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
+            <img id="al-dg" src="al_dg_off.png" class="componente" style="top: 27.6%; left: 12%; width: 39px;" onclick="toggleDG()">
         </div>
     </div>
 
     <script>
-        const coordenadasInstalacao = [
-            { id: 'REDEFASE',    cor: 'red',    a: { top: 38, left: 26 }, b: { top: 17, left: 99 } },
-            { id: 'REDENEUTRO', cor: 'blue',   a: { top: 35, left: 44.5}, b: { top: 14, left: 99 } }
-            // ... demais passos omitidos para brevidade, mas o sistema de loop está ativo
-        ];
+        const canvas = document.getElementById('canvas-simulador');
+        const ctx = canvas.getContext('2d');
 
-        let passoAtivo = 0;
-        let pA_ok = false;
+        // Carrega a imagem de fundo
+        const imgAmbiente = new Image();
+        imgAmbiente.src = 'ambiente.jpg';
+        imgAmbiente.onload = () => {
+            ctx.drawImage(imgAmbiente, 0, 0, 1000, 600);
+        };
+
+        // Função para desenhar os cabos sem usar a tag <img> no HTML
+        function desenharCabo(caminhoFrame) {
+            const frame = new Image();
+            frame.src = caminhoFrame;
+            frame.onload = () => {
+                // Redesenha o fundo e depois o cabo por cima, limpando qualquer artefato
+                ctx.clearRect(0, 0, 1000, 600);
+                ctx.drawImage(imgAmbiente, 0, 0, 1000, 600);
+                ctx.drawImage(frame, 0, 0, 1000, 600);
+            };
+        }
+
         let dgLigado = false;
-        let drLigado = false;
-        const totalFrames = { REDEFASE: 96, REDENEUTRO: 115 };
-
-        function iniciarLaboratorio() {
-            document.getElementById('splash-screen').style.display = 'none';
-            document.getElementById('conteudo-lab').style.display = 'flex';
-            carregarPasso();
+        function toggleDG() {
+            dgLigado = !dgLigado;
+            document.getElementById('al-dg').src = dgLigado ? 'al_dg_on.png' : 'al_dg_off.png';
+            // Exemplo de chamada: desenharCabo('REDEFASE/quadro001.png');
         }
-
-        function carregarPasso() {
-            if (passoAtivo >= coordenadasInstalacao.length) return;
-            const item = coordenadasInstalacao[passoAtivo];
-            const pA = document.getElementById('ponto-A');
-            pA.style.top = item.a.top + "%"; pA.style.left = item.a.left + "%";
-            pA.style.display = "block";
-        }
-
-        function cliquePonto(tipo) {
-            if (tipo === 'A') { pA_ok = true; document.getElementById('ponto-B').style.display = "block"; }
-            else if (tipo === 'B' && pA_ok) processarCabo();
-        }
-
-        async function processarCabo() {
-            const id = coordenadasInstalacao[passoAtivo].id;
-            const img = document.getElementById(id);
-            img.style.visibility = "visible"; // Torna o cabo visível apenas quando há imagem
-            for (let i = 1; i <= totalFrames[id]; i++) {
-                img.src = `${id}/quadro${String(i).padStart(3, '0')}.png`;
-                await new Promise(r => setTimeout(r, 20));
-            }
-            passoAtivo++;
-            carregarPasso();
-        }
-
-        function toggleDG() { dgLigado = !dgLigado; document.getElementById('al-dg').src = dgLigado ? 'al_dg_on.png' : 'al_dg_off.png'; }
-        // ... funções complementares mantidas
     </script>
 </body>
 </html>
