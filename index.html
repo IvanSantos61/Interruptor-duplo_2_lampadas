@@ -34,7 +34,7 @@
         /* CONFIGURAÇÃO DO TOOLTIP */
         #tooltip {
             position: fixed;
-            background: rgba(0, 240, 255, 0.95);
+            background: rgba(255, 255, 0, 0.95); /* Tooltip levemente amarelado para combinar */
             color: #060b13;
             padding: 6px 12px;
             border-radius: 4px;
@@ -43,24 +43,24 @@
             pointer-events: none;
             display: none;
             z-index: 2000;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.4);
             border: 1px solid #fff;
             text-transform: uppercase;
         }
 
-        /* CONFIGURAÇÃO DAS ÁREAS SENSÍVEIS COM LINHA SUAVE */
+        /* HOTSPOTS COM LINHA AMARELA NO HOVER */
         .hotspot {
             position: absolute;
             cursor: help;
             z-index: 100;
-            background: transparent; /* Invisível por padrão */
-            border: 1px solid transparent; /* Reserva o espaço da borda */
-            transition: border 0.3s ease, background 0.3s ease; /* Transição suave */
+            background: transparent;
+            border: 1px solid transparent;
+            transition: border 0.3s ease, background 0.3s ease;
         }
 
         .hotspot:hover {
-            border: 1px solid rgba(0, 240, 255, 0.5); /* Linha ciano suave ao passar o mouse */
-            background: rgba(0, 240, 255, 0.03); /* Fundo quase imperceptível apenas para feedback */
+            border: 1px solid rgba(255, 255, 0, 0.6); /* LINHA AMARELA SUAVE */
+            background: rgba(255, 255, 0, 0.05); /* FUNDO AMARELO QUASE IMPERCEPTÍVEL */
         }
     </style>
 </head>
