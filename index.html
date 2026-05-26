@@ -5,8 +5,9 @@
     <title>SMT Pro - FioCerto</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        html, body { margin: 0; padding: 0; background: #060b13; width: 100%; height: 100vh; overflow: hidden; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Removido qualquer margem ou borda que pudesse criar molduras externas */
+        html, body { margin: 0; padding: 0; background: #060b13; width: 100%; height: 100vh; overflow: hidden; border: none; outline: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; }
 
         /* --- TELA DE SPLASH --- */
@@ -32,7 +33,6 @@
             background: transparent; border: 2px solid #00f0ff; border-radius: 50px;
             color: #00f0ff; font-size: 15px; font-weight: bold; padding: 14px 45px;
             cursor: pointer; text-transform: uppercase; font-family: 'Orbitron', sans-serif;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
             animation: piscar 1.8s infinite ease-in-out;
         }
         @keyframes piscar { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
@@ -50,20 +50,21 @@
             width: 850px; height: 100px;
             background: #060b13; border: 1px solid #1a2a44; border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
-            margin-bottom: 30px; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
-            padding: 0 40px;
+            margin-bottom: 30px; padding: 0 40px;
         }
 
         #msg { color: #ff8c00; font-size: 16px; font-weight: bold; text-align: center; text-transform: uppercase; line-height: 1.4; }
         .prefixo-rede { color: #ff0000; margin-right: 5px; }
 
+        /* CONTAINER SEM MOLDURA BRANCA */
         #container-simulador { 
             position: relative; width: 1000px; height: 600px; 
             background: url('ambiente.jpg') no-repeat center center; 
-            background-size: contain; border: 1px solid #1a2a44; 
+            background-size: contain; 
+            border: none; /* Removida borda */
+            box-shadow: none; /* Removida sombra que poderia parecer moldura */
         }
 
-        /* --- BOTÕES DE CONTROLE (NOVO) --- */
         .controles-inferiores {
             position: absolute; bottom: 20px; left: 20px;
             display: flex; flex-direction: column; gap: 10px; z-index: 200;
@@ -72,24 +73,16 @@
             width: 140px; padding: 10px; border-radius: 20px; border: none;
             font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold;
             cursor: pointer; text-transform: uppercase; color: white;
-            transition: transform 0.2s, filter 0.2s;
         }
-        .btn-acao:active { transform: scale(0.95); }
         .btn-ajuda { background: #1a2a44; border: 1px solid #00f0ff; cursor: wait; opacity: 0.8; }
         .btn-reiniciar { background: #cc0000; box-shadow: 0 4px #800000; }
-        .btn-reiniciar:active { box-shadow: 0 1px #800000; transform: translateY(3px); }
 
         /* Elementos Técnicos */
-        .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: block; }
+        .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
         .ponto-conexao { position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; z-index: 150; cursor: pointer; display: none; transform: translate(-50%, -50%); }
         .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
-        .alavanca, .tecla { position: absolute; z-index: 110; cursor: pointer; }
-        .lampada-acesa { position: absolute; z-index: 105; pointer-events: none; display: none; }
-        .conector { position: absolute; z-index: 115; display: none; pointer-events: none; }
+        .hotspot { position: absolute; cursor: help; z-index: 100; background: transparent; }
         
-        .hotspot { position: absolute; cursor: help; z-index: 100; background: transparent; border: 1px solid transparent; transition: all 0.3s ease; }
-        .hotspot:hover { border: 1px solid rgba(255, 255, 0, 0.6); background: rgba(255, 255, 0, 0.05); }
-
         #tooltip { position: fixed; background: rgba(255, 255, 0, 0.95); color: #060b13; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: bold; pointer-events: none; display: none; z-index: 2000; border: 1px solid #fff; text-transform: uppercase; }
     </style>
 </head>
@@ -146,17 +139,17 @@
             <img id="NEUTROL1" class="camada-cabo">
             <img id="NEUTROL2" class="camada-cabo">
 
-            <img id="con-fase" src="con_derivacao.png" class="conector" style="top: 14%; left: 57%; width: 40px;">
-            <img id="con-neutro1" src="con_derivacao.png" class="conector" style="top: 11.4%; left: 75.7%; width: 40px;">
-            <img id="con-neutro2" src="con_derivacao.png" class="conector" style="top: 11.4%; left: 92%; width: 40px;">
+            <img id="con-fase" src="con_derivacao.png" style="position:absolute; display:none; top:14%; left:57%; width:40px; z-index:115;">
+            <img id="con-neutro1" src="con_derivacao.png" style="position:absolute; display:none; top:11.4%; left:75.7%; width:40px; z-index:115;">
+            <img id="con-neutro2" src="con_derivacao.png" style="position:absolute; display:none; top:11.4%; left:92%; width:40px; z-index:115;">
 
-            <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()">
-            <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
-            <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 64.5%; left: 57.5%; width: 65px;" onclick="toggleTecla(1)">
-            <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 68.9%; left: 57.5%; width: 65px;" onclick="toggleTecla(2)">
+            <img id="al-dg" src="al_dg_off.png" style="position:absolute; top:27.6%; left:12%; width:39.2px; z-index:110; cursor:pointer;" onclick="toggleDG()">
+            <img id="al-dr" src="al_dr_off.png" style="position:absolute; top:30%; left:23.5%; width:55px; z-index:110; cursor:pointer;" onclick="toggleDR()">
+            <img id="tecla-l1" src="intum_off.png" style="position:absolute; top:64.5%; left:57.5%; width:65px; z-index:110; cursor:pointer;" onclick="toggleTecla(1)">
+            <img id="tecla-l2" src="intdois_off.png" style="position:absolute; top:68.9%; left:57.5%; width:65px; z-index:110; cursor:pointer;" onclick="toggleTecla(2)">
 
-            <img id="lamp1-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 66.6%; width: 170px;">
-            <img id="lamp2-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 82.9%; width: 170px;">
+            <img id="lamp1-on" src="lamp_on.png" style="position:absolute; display:none; top:60.5%; left:66.6%; width:170px; z-index:105;">
+            <img id="lamp2-on" src="lamp_on.png" style="position:absolute; display:none; top:60.5%; left:82.9%; width:170px; z-index:105;">
 
             <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
             <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
@@ -192,9 +185,7 @@
             }, 600);
         }
 
-        function reiniciarFluxo() {
-            location.reload(); // Recarrega a página voltando para a Splash
-        }
+        function reiniciarFluxo() { location.reload(); }
 
         function carregarPasso() {
             if (passoAtivo >= coordenadasInstalacao.length) {
