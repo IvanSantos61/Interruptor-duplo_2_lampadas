@@ -6,7 +6,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         html, body { margin: 0; padding: 0; background: #060b13; width: 100%; height: 100vh; overflow: hidden; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; } /* Reset global de outline */
         body { color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; }
 
         /* --- TELA DE SPLASH --- */
@@ -57,13 +57,23 @@
         #msg { color: #ff8c00; font-size: 16px; font-weight: bold; text-align: center; text-transform: uppercase; line-height: 1.4; }
         .prefixo-rede { color: #ff0000; margin-right: 5px; }
 
+        /* AJUSTE FIX: Removido border e alterado background-size */
         #container-simulador { 
-            position: relative; width: 1000px; height: 600px; 
-            background: url('ambiente.jpg') no-repeat center center; 
-            background-size: contain; border: 1px solid #1a2a44; 
+            position: relative; 
+            width: 1000px; 
+            height: 600px; 
+            background: #060b13 url('ambiente.jpg') no-repeat center center; 
+            background-size: 100% 100%; 
+            border: none; 
+            overflow: hidden;
         }
 
-        /* --- BOTÕES DE CONTROLE (NOVO) --- */
+        /* AJUSTE FIX: Reset de bordas para todas as imagens dentro do simulador */
+        #container-simulador img {
+            border: none;
+            -webkit-user-drag: none;
+        }
+
         .controles-inferiores {
             position: absolute; bottom: 20px; left: 20px;
             display: flex; flex-direction: column; gap: 10px; z-index: 200;
@@ -79,7 +89,6 @@
         .btn-reiniciar { background: #cc0000; box-shadow: 0 4px #800000; }
         .btn-reiniciar:active { box-shadow: 0 1px #800000; transform: translateY(3px); }
 
-        /* Elementos Técnicos */
         .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: block; }
         .ponto-conexao { position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; z-index: 150; cursor: pointer; display: none; transform: translate(-50%, -50%); }
         .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
@@ -164,8 +173,9 @@
     </div>
 
     <script>
+        // Logica mantida conforme original
         const coordenadasInstalacao = [
-            { id: 'REDEFASE',   cor: 'red',    a: { top: 38, left: 26 }, b: { top: 17, left: 99 } },
+            { id: 'REDEFASE',    cor: 'red',    a: { top: 38, left: 26 }, b: { top: 17, left: 99 } },
             { id: 'REDENEUTRO', cor: 'blue',   a: { top: 35, left: 44.5}, b: { top: 14, left: 99 } },
             { id: 'FASEINT',    cor: 'red',    a: { top: 19, left: 60 }, b: { top: 67, left: 58 } },
             { id: 'JUMP',       cor: 'red',    a: { top: 68, left: 56 }, b: { top: 72, left: 58 } },
@@ -193,7 +203,7 @@
         }
 
         function reiniciarFluxo() {
-            location.reload(); // Recarrega a página voltando para a Splash
+            location.reload();
         }
 
         function carregarPasso() {
