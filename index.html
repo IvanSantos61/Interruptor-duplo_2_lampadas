@@ -31,7 +31,7 @@
         
         #painel-status { margin-bottom: 15px; color: #00f0ff; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
 
-       ESTILOS DOS HOTSPOTS E TOOLTIP 
+        /* CONFIGURAÇÃO DO TOOLTIP (BALÃO DE TEXTO) */
         #tooltip {
             position: fixed;
             background: rgba(0, 240, 255, 0.95);
@@ -48,11 +48,12 @@
             text-transform: uppercase;
         }
 
+        /* CONFIGURAÇÃO DAS ÁREAS SENSÍVEIS */
         .hotspot {
             position: absolute;
             cursor: help;
             z-index: 100;
-            /* background: rgba(255, 0, 0, 0.2); */ /* Descomente para ajustar as posições */
+            background: rgba(0, 255, 255, 0.1); /* Cor suave para você enxergar os hotspots no teste */
         }
     </style>
 </head>
@@ -63,29 +64,28 @@
     <div id="painel-status">MODO DE INSTALAÇÃO: <span id="msg">INICIANDO...</span></div>
 
     <div id="container-simulador">
-      <!--  CRIAÇÃO DOS HOTSPOTS - INICIO   -->
-<div class="hotspot" style="top: 2%; left: 5%; width: 400px; height: 35px;" onmouseover="showTip('BARRA DE ATERRAMENTO')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 25%; left: 11%; width: 45px; height: 110px;" onmouseover="showTip('DISJUNTOR GERAL')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 25%; left: 16%; width: 45px; height: 110px;" onmouseover="showTip('DPS (PROTETOR DE SURTO)')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 25%; left: 22%; width: 75px; height: 110px;" onmouseover="showTip('DISPOSITIVO DR')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 25%; left: 31%; width: 130px; height: 110px;" onmouseover="showTip('DISJUNTORES DOS CIRCUITOS')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 2%; left: 65%; width: 300px; height: 35px;" onmouseover="showTip('BARRA DE NEUTRO')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 5%; left: 96%; width: 40px; height: 200px;" onmouseover="showTip('REDE ELÉTRICA')" onmouseout="hideTip()"></div>
-
-<div class="hotspot" style="top: 63%; left: 56.5%; width: 80px; height: 110px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 45%; left: 72%; width: 65px; height: 100px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 45%; left: 88%; width: 65px; height: 100px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 10%; left: 55%; width: 80px; height: 100px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
-
-<div class="hotspot" style="top: 64%; left: 57%; width: 70px; height: 100px;" onmouseover="showTip('INTERRUPTOR 2 SEÇÕES')" onmouseout="hideTip()"></div>
-
-<div class="hotspot" style="top: 55%; left: 72%; width: 60px; height: 30px;" onmouseover="showTip('BOCAL E27')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 58%; left: 69%; width: 120px; height: 90px;" onmouseover="showTip('LÂMPADA LED 127V')" onmouseout="hideTip()"></div>
-
-<div class="hotspot" style="top: 55%; left: 88.5%; width: 60px; height: 30px;" onmouseover="showTip('BOCAL E27')" onmouseout="hideTip()"></div>
-<div class="hotspot" style="top: 58%; left: 85%; width: 120px; height: 90px;" onmouseover="showTip('LÂMPADA LED 127V')" onmouseout="hideTip()"></div>
-             <!-- CRIAÇÃO DOS HOTSPOTS - FINAL  -->
         
+        <div class="hotspot" style="top: 2%; left: 5%; width: 400px; height: 35px;" onmouseover="showTip('BARRA DE ATERRAMENTO')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 25%; left: 11%; width: 45px; height: 110px;" onmouseover="showTip('DISJUNTOR GERAL')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 25%; left: 16%; width: 45px; height: 110px;" onmouseover="showTip('DPS (PROTETOR DE SURTO)')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 25%; left: 22%; width: 75px; height: 110px;" onmouseover="showTip('DISPOSITIVO DR')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 25%; left: 31%; width: 130px; height: 110px;" onmouseover="showTip('DISJUNTORES DOS CIRCUITOS')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 2%; left: 65%; width: 300px; height: 35px;" onmouseover="showTip('BARRA DE NEUTRO')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 5%; left: 96%; width: 40px; height: 200px;" onmouseover="showTip('REDE ELÉTRICA')" onmouseout="hideTip()"></div>
+
+        <div class="hotspot" style="top: 63%; left: 56.5%; width: 80px; height: 110px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 45%; left: 72%; width: 65px; height: 100px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 45%; left: 88%; width: 65px; height: 100px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 10%; left: 55%; width: 80px; height: 100px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
+
+        <div class="hotspot" style="top: 64%; left: 57%; width: 70px; height: 100px;" onmouseover="showTip('INTERRUPTOR 2 SEÇÕES')" onmouseout="hideTip()"></div>
+
+        <div class="hotspot" style="top: 55%; left: 72%; width: 60px; height: 30px;" onmouseover="showTip('BOCAL E27')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 58%; left: 69%; width: 120px; height: 90px;" onmouseover="showTip('LÂMPADA LED 127V')" onmouseout="hideTip()"></div>
+
+        <div class="hotspot" style="top: 55%; left: 88.5%; width: 60px; height: 30px;" onmouseover="showTip('BOCAL E27')" onmouseout="hideTip()"></div>
+        <div class="hotspot" style="top: 58%; left: 85%; width: 120px; height: 90px;" onmouseover="showTip('LÂMPADA LED 127V')" onmouseout="hideTip()"></div>
+
         <img id="REDEFASE" class="camada-cabo">
         <img id="REDENEUTRO" class="camada-cabo">
         <img id="FASEINT" class="camada-cabo">
@@ -99,14 +99,14 @@
         <img id="con-neutro1" src="con_derivacao.png" class="conector" style="top: 11.4%; left: 75.7%; width: 40px;">
         <img id="con-neutro2" src="con_derivacao.png" class="conector" style="top: 11.4%; left: 92%; width: 40px;">
 
-        <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()" onmouseover="showTip('DISJUNTOR GERAL')" onmouseout="hideTip()">
-        <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()" onmouseover="showTip('DISPOSITIVO DR')" onmouseout="hideTip()">
+        <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()">
+        <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
         
-        <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 64.5%; left: 57.5%; width: 65px;" onclick="toggleTecla(1)" onmouseover="showTip('INTERRUPTOR 2 SEÇÕES')" onmouseout="hideTip()">
-        <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 68.9%; left: 57.5%; width: 65px;" onclick="toggleTecla(2)" onmouseover="showTip('INTERRUPTOR 2 SEÇÕES')" onmouseout="hideTip()">
+        <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 64.5%; left: 57.5%; width: 65px;" onclick="toggleTecla(1)">
+        <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 68.9%; left: 57.5%; width: 65px;" onclick="toggleTecla(2)">
 
-        <img id="lamp1-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 66.6%; width: 170px;" onmouseover="showTip('LÂMPADA LED 127V / BOCAL E27')" onmouseout="hideTip()">
-        <img id="lamp2-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 82.9%; width: 170px;" onmouseover="showTip('LÂMPADA LED 127V / BOCAL E27')" onmouseout="hideTip()">
+        <img id="lamp1-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 66.6%; width: 170px;">
+        <img id="lamp2-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 82.9%; width: 170px;">
 
         <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
         <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
@@ -209,7 +209,7 @@
             }
         }
 
-        // LÓGICA DO TOOLTIP
+        // Lógica do Tooltip
         const tip = document.getElementById('tooltip');
         function showTip(texto) { tip.innerText = texto; tip.style.display = 'block'; }
         function hideTip() { tip.style.display = 'none'; }
