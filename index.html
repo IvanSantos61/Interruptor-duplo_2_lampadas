@@ -31,7 +31,7 @@
         
         #painel-status { margin-bottom: 15px; color: #00f0ff; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
 
-        /* CONFIGURAÇÃO DO TOOLTIP (BALÃO DE TEXTO) */
+        /* CONFIGURAÇÃO DO TOOLTIP */
         #tooltip {
             position: fixed;
             background: rgba(0, 240, 255, 0.95);
@@ -48,12 +48,19 @@
             text-transform: uppercase;
         }
 
-        /* CONFIGURAÇÃO DAS ÁREAS SENSÍVEIS */
+        /* CONFIGURAÇÃO DAS ÁREAS SENSÍVEIS COM LINHA SUAVE */
         .hotspot {
             position: absolute;
             cursor: help;
             z-index: 100;
-            background: rgba(0, 255, 255, 0.1); /* Cor suave para você enxergar os hotspots no teste */
+            background: transparent; /* Invisível por padrão */
+            border: 1px solid transparent; /* Reserva o espaço da borda */
+            transition: border 0.3s ease, background 0.3s ease; /* Transição suave */
+        }
+
+        .hotspot:hover {
+            border: 1px solid rgba(0, 240, 255, 0.5); /* Linha ciano suave ao passar o mouse */
+            background: rgba(0, 240, 255, 0.03); /* Fundo quase imperceptível apenas para feedback */
         }
     </style>
 </head>
@@ -209,7 +216,6 @@
             }
         }
 
-        // Lógica do Tooltip
         const tip = document.getElementById('tooltip');
         function showTip(texto) { tip.innerText = texto; tip.style.display = 'block'; }
         function hideTip() { tip.style.display = 'none'; }
