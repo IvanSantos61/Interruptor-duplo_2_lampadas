@@ -2,14 +2,14 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SMT Pro - FioCerto</title>
+    <title>SMT Pro - Laboratório de Instalação</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         html, body { margin: 0; padding: 0; background: #060b13; width: 100%; height: 100vh; overflow: hidden; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-        /* --- TELA DE SPLASH (DESIGN DA GRAVURA) --- */
+        /* --- TELA DE SPLASH --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #060b13; z-index: 5000;
@@ -40,7 +40,7 @@
         /* --- INTERFACE PRINCIPAL --- */
         #conteudo-lab { display: none; flex-direction: column; align-items: center; width: 100%; height: 100%; padding-top: 20px; }
         #painel-status { width: 1000px; padding: 18px; margin-bottom: 15px; border: 2px solid #1a2a44; border-radius: 12px; text-align: center; background: rgba(10, 20, 35, 0.8); }
-        #msg { color: #00f0ff; font-size: 16px; font-weight: bold; text-shadow: 0 0 5px #00f0ff; }
+        #msg { color: #00f0ff; font-size: 16px; font-weight: bold; text-shadow: 0 0 5px #00f0ff; text-transform: uppercase; }
 
         #container-simulador { position: relative; width: 1000px; height: 600px; background: url('ambiente.jpg') no-repeat center center; background-size: contain; border: 2px solid #1a2a44; box-shadow: 0 0 50px #000; }
         
@@ -53,8 +53,8 @@
         .conector { position: absolute; z-index: 115; display: none; pointer-events: none; }
         
         #tooltip { position: fixed; background: rgba(255, 255, 0, 0.95); color: #060b13; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: bold; pointer-events: none; display: none; z-index: 2000; border: 1px solid #fff; text-transform: uppercase; }
-        .hotspot { position: absolute; cursor: help; z-index: 100; background: transparent; border: 1px solid transparent; }
-        .hotspot:hover { border: 1px solid rgba(255, 255, 0, 0.5); background: rgba(255, 255, 0, 0.05); }
+        .hotspot { position: absolute; cursor: help; z-index: 100; background: transparent; border: 1px solid transparent; transition: border 0.3s ease; }
+        .hotspot:hover { border: 1px solid rgba(255, 255, 0, 0.6); background: rgba(255, 255, 0, 0.05); }
     </style>
 </head>
 <body>
@@ -72,13 +72,27 @@
     </div>
 
     <div id="conteudo-lab">
-        <div id="painel-status">MODO DE INSTALAÇÃO: <span id="msg">INICIANDO...</span></div>
+        <div id="painel-status">MODO DE INSTALAÇÃO: <span id="msg">AGUARDANDO...</span></div>
 
         <div id="container-simulador">
+            <div class="hotspot" style="top: 12%; left: 6%; width: 35px; height: 200px;" onmouseover="showTip('BARRA DE ATERRAMENTO')" onmouseout="hideTip()"></div>
             <div class="hotspot" style="top: 15%; left: 12%; width: 45px; height: 150px;" onmouseover="showTip('DISJUNTOR GERAL')" onmouseout="hideTip()"></div>
+            <div class="hotspot" style="top: 15%; left: 15.6%; width: 40px; height: 153px;" onmouseover="showTip('DPS (PROTETOR DE SURTO)')" onmouseout="hideTip()"></div>
             <div class="hotspot" style="top: 15%; left: 19.5%; width: 90px; height: 161px;" onmouseover="showTip('DISPOSITIVO DR')" onmouseout="hideTip()"></div>
+            <div class="hotspot" style="top: 15%; left: 28.5%; width: 115px; height: 152px;" onmouseover="showTip('DISJUNTORES DOS CIRCUITOS')" onmouseout="hideTip()"></div>
+            <div class="hotspot" style="top: 12%; left: 42.6%; width: 35px; height: 200px;" onmouseover="showTip('BARRA DE NEUTRO')" onmouseout="hideTip()"></div>
             <div class="hotspot" style="top: 55%; left: 6%; width: 45px; height: 130px;" onmouseover="showTip('REDE ELÉTRICA')" onmouseout="hideTip()"></div>
+
+            <div class="hotspot" style="top: 58%; left: 27.5%; width: 130px; height: 180px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
+            <div class="hotspot" style="top: 13%; left: 54.5%; width: 130px; height: 180px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
+            <div class="hotspot" style="top: 13%; left: 70.5%; width: 130px; height: 180px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
+            <div class="hotspot" style="top: 13%; left: 86.5%; width: 130px; height: 180px;" onmouseover="showTip('CAIXA DE PASSAGEM 4x2')" onmouseout="hideTip()"></div>
+
             <div class="hotspot" style="top: 56%; left: 57%; width: 70px; height: 160px;" onmouseover="showTip('INTERRUPTOR 2 SEÇÕES')" onmouseout="hideTip()"></div>
+            <div class="hotspot" style="top: 60%; left: 73%; width: 40px; height: 48px;" onmouseover="showTip('BOCAL E27')" onmouseout="hideTip()"></div>
+            <div class="hotspot" style="top: 67%; left: 71.7%; width: 66px; height: 85px;" onmouseover="showTip('LÂMPADA LED 127V')" onmouseout="hideTip()"></div>
+            <div class="hotspot" style="top: 60%; left: 89.3%; width: 40px; height: 48px;" onmouseover="showTip('BOCAL E27')" onmouseout="hideTip()"></div>
+            <div class="hotspot" style="top: 67%; left: 88.2%; width: 66px; height: 85px;" onmouseover="showTip('LÂMPADA LED 127V')" onmouseout="hideTip()"></div>
 
             <img id="REDEFASE" class="camada-cabo">
             <img id="REDENEUTRO" class="camada-cabo">
@@ -148,7 +162,7 @@
             else if (item.id === 'NEUTROL1') document.getElementById('con-neutro1').style.display = 'block';
             else if (item.id === 'NEUTROL2') document.getElementById('con-neutro2').style.display = 'block';
 
-            document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": CONECTAR " + item.id;
+            document.getElementById('msg').innerText = "PASSO " + (passoAtivo + 1) + ": " + item.id;
             const pA = document.getElementById('ponto-A');
             pA.style.top = item.a.top + "%"; pA.style.left = item.a.left + "%";
             pA.classList.remove('ponto-verde'); pA.style.backgroundColor = item.cor; pA.style.display = "block";
@@ -189,7 +203,7 @@
             if (fiacaoPronta) {
                 document.getElementById('lamp1-on').style.display = (energia && tecla1Ligada) ? 'block' : 'none';
                 document.getElementById('lamp2-on').style.display = (energia && tecla2Ligada) ? 'block' : 'none';
-                document.getElementById('msg').innerHTML = energia ? "<span style='color:#00ff00'>SISTEMA ENERGIZADO</span>" : "<span style='color:#ff0000'>CIRCUITO SECCIONADO</span>";
+                document.getElementById('msg').innerHTML = energia ? "<span style='color:#00ff00'>SISTEMA ENERGIZADO - OK</span>" : "<span style='color:#ff0000'>CIRCUITO SECCIONADO</span>";
             }
         }
 
