@@ -18,7 +18,6 @@
         }
         .moldura-splash {
             width: 900px; height: 500px;
-            /* Removida a borda e sombra que poderiam parecer brancas */
             border: none; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; background: #060b13;
@@ -49,11 +48,11 @@
         #painel-status { 
             width: 850px; height: 100px;
             background: #060b13; 
-            border: none !important; /* Removida moldura */
+            border: none !important;
             display: flex; align-items: center; justify-content: center;
             margin-bottom: 30px; 
             padding: 0 40px;
-            box-shadow: none !important; /* Removida sombra interna */
+            box-shadow: none !important;
         }
 
         #msg { color: #ff8c00; font-size: 16px; font-weight: bold; text-align: center; text-transform: uppercase; line-height: 1.4; }
@@ -63,25 +62,37 @@
             position: relative; width: 1000px; height: 600px; 
             background: url('ambiente.jpg') no-repeat center center; 
             background-size: contain; 
-            border: none !important; /* Removida moldura */
+            border: none !important;
             box-shadow: none !important;
         }
 
-        /* --- BOTÕES DE CONTROLE --- */
-        .controles-inferiores {
-            position: absolute; bottom: 20px; left: 20px;
-            display: flex; flex-direction: column; gap: 10px; z-index: 200;
-        }
+        /* --- BOTÕES COM COORDENADAS --- */
         .btn-acao {
+            position: absolute;
             width: 140px; padding: 10px; border-radius: 20px; border: none;
             font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold;
             cursor: pointer; text-transform: uppercase; color: white;
             transition: transform 0.2s, filter 0.2s;
+            z-index: 200;
         }
         .btn-acao:active { transform: scale(0.95); }
-        .btn-ajuda { background: #1a2a44; border: 1px solid #00f0ff; cursor: wait; opacity: 0.8; }
-        .btn-reiniciar { background: #cc0000; box-shadow: 0 4px #800000; }
-        .btn-reiniciar:active { box-shadow: 0 1px #800000; transform: translateY(3px); }
+
+        .btn-ajuda { 
+            top: 490px; 
+            left: 20px; 
+            background: #1a2a44; 
+            border: 1px solid #00f0ff; 
+            cursor: wait; 
+            opacity: 0.8; 
+        }
+
+        .btn-reiniciar { 
+            top: 540px; 
+            left: 20px; 
+            background: #cc0000; 
+            box-shadow: 0 4px #800000; 
+        }
+        .btn-reiniciar:active { box-shadow: 0 1px #800000; transform: translateY(3px) scale(0.95); }
 
         /* Elementos Técnicos */
         .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: block; }
@@ -119,10 +130,8 @@
         </div>
 
         <div id="container-simulador">
-            <div class="controles-inferiores">
-                <button class="btn-acao btn-ajuda">AJUDA</button>
-                <button class="btn-acao btn-reiniciar" onclick="reiniciarFluxo()">REINICIAR</button>
-            </div>
+            <button class="btn-acao btn-ajuda">AJUDA</button>
+            <button class="btn-acao btn-reiniciar" onclick="reiniciarFluxo()">REINICIAR</button>
 
             <div class="hotspot" style="top: 12%; left: 6%; width: 35px; height: 200px;" onmouseover="showTip('BARRA DE ATERRAMENTO')" onmouseout="hideTip()"></div>
             <div class="hotspot" style="top: 15%; left: 12%; width: 45px; height: 150px;" onmouseover="showTip('DISJUNTOR GERAL')" onmouseout="hideTip()"></div>
@@ -168,7 +177,6 @@
     </div>
 
     <script>
-        // Lógica de funcionamento (idêntica à original para não quebrar o lab)
         const coordenadasInstalacao = [
             { id: 'REDEFASE',   cor: 'red',    a: { top: 38, left: 26 }, b: { top: 17, left: 99 } },
             { id: 'REDENEUTRO', cor: 'blue',   a: { top: 35, left: 44.5}, b: { top: 14, left: 99 } },
