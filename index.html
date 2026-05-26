@@ -63,21 +63,35 @@
             background-size: contain; border: 1px solid #1a2a44; 
         }
 
-        /* --- BOTÕES DE CONTROLE (NOVO) --- */
-        .controles-inferiores {
-            position: absolute; bottom: 20px; left: 20px;
-            display: flex; flex-direction: column; gap: 10px; z-index: 200;
-        }
+        /* --- BOTÕES COM COORDENADAS --- */
         .btn-acao {
+            position: absolute; /* Necessário para usar top e left */
             width: 140px; padding: 10px; border-radius: 20px; border: none;
             font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold;
             cursor: pointer; text-transform: uppercase; color: white;
             transition: transform 0.2s, filter 0.2s;
+            z-index: 200;
         }
+        
+        /* Ajuste os valores de top e left abaixo como desejar */
+        .btn-ajuda { 
+            top: 485px; 
+            left: 20px; 
+            background: #1a2a44; 
+            border: 1px solid #00f0ff; 
+            cursor: wait; 
+            opacity: 0.8; 
+        }
+
+        .btn-reiniciar { 
+            top: 535px; 
+            left: 20px; 
+            background: #cc0000; 
+            box-shadow: 0 4px #800000; 
+        }
+
         .btn-acao:active { transform: scale(0.95); }
-        .btn-ajuda { background: #1a2a44; border: 1px solid #00f0ff; cursor: wait; opacity: 0.8; }
-        .btn-reiniciar { background: #cc0000; box-shadow: 0 4px #800000; }
-        .btn-reiniciar:active { box-shadow: 0 1px #800000; transform: translateY(3px); }
+        .btn-reiniciar:active { box-shadow: 0 1px #800000; transform: translateY(3px) scale(0.95); }
 
         /* Elementos Técnicos */
         .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: block; }
@@ -115,10 +129,8 @@
         </div>
 
         <div id="container-simulador">
-            <div class="controles-inferiores">
-                <button class="btn-acao btn-ajuda">AJUDA</button>
-                <button class="btn-acao btn-reiniciar" onclick="reiniciarFluxo()">REINICIAR</button>
-            </div>
+            <button class="btn-acao btn-ajuda">AJUDA</button>
+            <button class="btn-acao btn-reiniciar" onclick="reiniciarFluxo()">REINICIAR</button>
 
             <div class="hotspot" style="top: 12%; left: 6%; width: 35px; height: 200px;" onmouseover="showTip('BARRA DE ATERRAMENTO')" onmouseout="hideTip()"></div>
             <div class="hotspot" style="top: 15%; left: 12%; width: 45px; height: 150px;" onmouseover="showTip('DISJUNTOR GERAL')" onmouseout="hideTip()"></div>
@@ -193,7 +205,7 @@
         }
 
         function reiniciarFluxo() {
-            location.reload(); // Recarrega a página voltando para a Splash
+            location.reload(); 
         }
 
         function carregarPasso() {
