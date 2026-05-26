@@ -32,15 +32,13 @@
             background: transparent; border: 2px solid #00f0ff; border-radius: 50px;
             color: #00f0ff; font-size: 15px; font-weight: bold; padding: 14px 45px;
             cursor: pointer; text-transform: uppercase; font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
             animation: piscar 1.8s infinite ease-in-out;
         }
         @keyframes piscar { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
         /* --- INTERFACE PRINCIPAL --- */
-        #conteudo-lab { 
-            display: none; flex-direction: column; align-items: center; width: 100%; padding-top: 30px; 
-            border: none !important; outline: none !important; /* Garantia extra */
-        }
+        #conteudo-lab { display: none; flex-direction: column; align-items: center; width: 100%; padding-top: 30px; }
         
         .titulo-principal {
             color: #00f0ff; font-size: 38px; letter-spacing: 4px;
@@ -59,64 +57,40 @@
         #msg { color: #ff8c00; font-size: 16px; font-weight: bold; text-align: center; text-transform: uppercase; line-height: 1.4; }
         .prefixo-rede { color: #ff0000; margin-right: 5px; }
 
-        /* CONTAINER SEM MOLDURA */
-   #container-simulador {
-    position: relative;
+        #container-simulador { 
+            position: relative; width: 1000px; height: 600px; 
+            background: url('ambiente.jpg') no-repeat center center; 
+            background-size: contain; border: 1px solid #1a2a44; 
+        }
 
-    width: 1000px;
-    height: 600px;
-
-    background: url('ambiente.jpg') no-repeat center center;
-    background-size: cover;
-
-    overflow: hidden;
-
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-
-    transform: translateZ(0);
-}
-
-        .controles-inferiores { position: absolute; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 200; }
-        .btn-acao { width: 140px; padding: 10px; border-radius: 20px; border: none; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; color: white; }
+        /* --- BOTÕES DE CONTROLE (NOVO) --- */
+        .controles-inferiores {
+            position: absolute; bottom: 20px; left: 20px;
+            display: flex; flex-direction: column; gap: 10px; z-index: 200;
+        }
+        .btn-acao {
+            width: 140px; padding: 10px; border-radius: 20px; border: none;
+            font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold;
+            cursor: pointer; text-transform: uppercase; color: white;
+            transition: transform 0.2s, filter 0.2s;
+        }
+        .btn-acao:active { transform: scale(0.95); }
         .btn-ajuda { background: #1a2a44; border: 1px solid #00f0ff; cursor: wait; opacity: 0.8; }
         .btn-reiniciar { background: #cc0000; box-shadow: 0 4px #800000; }
+        .btn-reiniciar:active { box-shadow: 0 1px #800000; transform: translateY(3px); }
 
         /* Elementos Técnicos */
-        .camada-cabo {
-    position: absolute;
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    display: block;
-
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-
-    background: transparent !important;
-
-    pointer-events: none;
-    z-index: 10;
-
-    image-rendering: auto;
-
-    transform: translateZ(0);
-}
+        .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: block; }
         .ponto-conexao { position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; z-index: 150; cursor: pointer; display: none; transform: translate(-50%, -50%); }
         .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
-        .hotspot { position: absolute; cursor: help; z-index: 100; background: transparent; }
+        .alavanca, .tecla { position: absolute; z-index: 110; cursor: pointer; }
+        .lampada-acesa { position: absolute; z-index: 105; pointer-events: none; display: none; }
+        .conector { position: absolute; z-index: 115; display: none; pointer-events: none; }
         
+        .hotspot { position: absolute; cursor: help; z-index: 100; background: transparent; border: 1px solid transparent; transition: all 0.3s ease; }
+        .hotspot:hover { border: 1px solid rgba(255, 255, 0, 0.6); background: rgba(255, 255, 0, 0.05); }
+
         #tooltip { position: fixed; background: rgba(255, 255, 0, 0.95); color: #060b13; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: bold; pointer-events: none; display: none; z-index: 2000; border: 1px solid #fff; text-transform: uppercase; }
-img {
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-        
     </style>
 </head>
 <body>
@@ -172,6 +146,18 @@ img {
             <img id="NEUTROL1" class="camada-cabo">
             <img id="NEUTROL2" class="camada-cabo">
 
+            <img id="con-fase" src="con_derivacao.png" class="conector" style="top: 14%; left: 57%; width: 40px;">
+            <img id="con-neutro1" src="con_derivacao.png" class="conector" style="top: 11.4%; left: 75.7%; width: 40px;">
+            <img id="con-neutro2" src="con_derivacao.png" class="conector" style="top: 11.4%; left: 92%; width: 40px;">
+
+            <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39.2px;" onclick="toggleDG()">
+            <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
+            <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 64.5%; left: 57.5%; width: 65px;" onclick="toggleTecla(1)">
+            <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 68.9%; left: 57.5%; width: 65px;" onclick="toggleTecla(2)">
+
+            <img id="lamp1-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 66.6%; width: 170px;">
+            <img id="lamp2-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 82.9%; width: 170px;">
+
             <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
             <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
         </div>
@@ -191,6 +177,10 @@ img {
 
         let passoAtivo = 0;
         let pA_ok = false;
+        let dgLigado = false;
+        let drLigado = false;
+        let tecla1Ligada = false;
+        let tecla2Ligada = false;
         const totalFrames = { REDEFASE: 96, REDENEUTRO: 115, FASEINT: 43, JUMP: 10, RETORNO1: 54, RETORNO2: 45, NEUTROL1: 25, NEUTROL2: 25 };
 
         function iniciarLaboratorio() {
@@ -202,20 +192,28 @@ img {
             }, 600);
         }
 
-        function reiniciarFluxo() { location.reload(); }
+        function reiniciarFluxo() {
+            location.reload(); // Recarrega a página voltando para a Splash
+        }
 
         function carregarPasso() {
             if (passoAtivo >= coordenadasInstalacao.length) {
-                document.getElementById('msg').innerHTML = "<span class='prefixo-rede'>REDE:</span> MONTAGEM CONCLUÍDA!";
+                document.getElementById('msg').innerHTML = "<span class='prefixo-rede'>REDE:</span> MONTAGEM CONCLUÍDA! <span style='color:#fff'>TESTE O SISTEMA.</span>";
                 document.getElementById('ponto-A').style.display = 'none';
                 document.getElementById('ponto-B').style.display = 'none';
+                verificarEnergia();
                 return;
             }
             const item = coordenadasInstalacao[passoAtivo];
+            if (item.id === 'FASEINT') document.getElementById('con-fase').style.display = 'block';
+            else if (item.id === 'NEUTROL1') document.getElementById('con-neutro1').style.display = 'block';
+            else if (item.id === 'NEUTROL2') document.getElementById('con-neutro2').style.display = 'block';
+
             document.getElementById('msg').innerHTML = `<span class='prefixo-rede'>REDE:</span> CLIQUE NA REFERÊNCIA INDICADA PARA CONECTAR ${item.id}`;
             const pA = document.getElementById('ponto-A');
             pA.style.top = item.a.top + "%"; pA.style.left = item.a.left + "%";
             pA.classList.remove('ponto-verde'); pA.style.backgroundColor = item.cor; pA.style.display = "block";
+            
             const pB = document.getElementById('ponto-B');
             pB.style.top = item.b.top + "%"; pB.style.left = item.b.left + "%";
             pB.classList.remove('ponto-verde'); pB.style.backgroundColor = item.cor; pB.style.display = "none";
@@ -236,6 +234,24 @@ img {
             }
             passoAtivo++;
             setTimeout(carregarPasso, 500);
+        }
+
+        function toggleDG() { dgLigado = !dgLigado; document.getElementById('al-dg').src = dgLigado ? 'al_dg_on.png' : 'al_dg_off.png'; verificarEnergia(); }
+        function toggleDR() { drLigado = !drLigado; document.getElementById('al-dr').src = drLigado ? 'al_dr_on.png' : 'al_dr_off.png'; verificarEnergia(); }
+        function toggleTecla(num) {
+            if (num === 1) { tecla1Ligada = !tecla1Ligada; document.getElementById('tecla-l1').src = tecla1Ligada ? 'intum_on.png' : 'intum_off.png'; }
+            else { tecla2Ligada = !tecla2Ligada; document.getElementById('tecla-l2').src = tecla2Ligada ? 'intdois_on.png' : 'intdois_off.png'; }
+            verificarEnergia();
+        }
+
+        function verificarEnergia() {
+            const fiacaoPronta = passoAtivo >= coordenadasInstalacao.length;
+            const energia = dgLigado && drLigado;
+            if (fiacaoPronta) {
+                document.getElementById('lamp1-on').style.display = (energia && tecla1Ligada) ? 'block' : 'none';
+                document.getElementById('lamp2-on').style.display = (energia && tecla2Ligada) ? 'block' : 'none';
+                document.getElementById('msg').innerHTML = energia ? "<span class='prefixo-rede'>REDE:</span> SISTEMA ENERGIZADO" : "<span class='prefixo-rede'>REDE:</span> CIRCUITO SECCIONADO";
+            }
         }
 
         const tip = document.getElementById('tooltip');
