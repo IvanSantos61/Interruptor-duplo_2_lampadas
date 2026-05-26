@@ -10,17 +10,14 @@
 
         #conteudo-lab { display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 30px; }
         
-        /* O Container agora é apenas um limitador de espaço */
         #container-simulador { 
             position: relative; 
             width: 1000px; 
             height: 600px; 
-            background: #060b13; /* Fundo sólido para garantir o Dark */
+            background: #060b13;
             overflow: hidden;
         }
 
-        /* O FUNDO E OS CABOS SÃO DESENHADOS AQUI. 
-           Canvas não possui bordas padrão nem ícones de erro. */
         #canvas-simulador {
             position: absolute;
             top: 0;
@@ -29,8 +26,23 @@
             background: transparent;
         }
 
-        /* Os componentes interativos ficam por cima (z-index 10) */
-        .componente { position: absolute; z-index: 10; cursor: pointer; border: none !important; }
+        /* MUDANÇAS AQUI */
+        .componente { 
+            position: absolute; 
+            z-index: 10; 
+            cursor: pointer; 
+            border: 0 !important;
+            outline: none !important; /* Remove outline de foco */
+            background: transparent; /* Remove fundo branco se não carregar */
+            -webkit-user-drag: none; /* Remove fantasma ao arrastar */
+            user-select: none;
+        }
+        
+        /* Remove outline quando clica/foca */
+        .componente:focus, .componente:active {
+            outline: none !important;
+            border: 0 !important;
+        }
     </style>
 </head>
 <body>
@@ -39,7 +51,7 @@
         <div id="container-simulador">
             <canvas id="canvas-simulador" width="1000" height="600"></canvas>
 
-            <img id="al-dg" src="al_dg_off.png" class="componente" style="top: 27.6%; left: 12%; width: 39px;" onclick="toggleDG()">
+            <img id="al-dg" src="al_dg_off.png" class="componente" style="top: 27.6%; left: 12%; width: 39px;" onclick="toggleDG()" onerror="this.style.display='none'">
         </div>
     </div>
 
@@ -47,19 +59,16 @@
         const canvas = document.getElementById('canvas-simulador');
         const ctx = canvas.getContext('2d');
 
-        // Carrega a imagem de fundo
         const imgAmbiente = new Image();
         imgAmbiente.src = 'ambiente.jpg';
         imgAmbiente.onload = () => {
             ctx.drawImage(imgAmbiente, 0, 0, 1000, 600);
         };
 
-        // Função para desenhar os cabos sem usar a tag <img> no HTML
         function desenharCabo(caminhoFrame) {
             const frame = new Image();
             frame.src = caminhoFrame;
             frame.onload = () => {
-                // Redesenha o fundo e depois o cabo por cima, limpando qualquer artefato
                 ctx.clearRect(0, 0, 1000, 600);
                 ctx.drawImage(imgAmbiente, 0, 0, 1000, 600);
                 ctx.drawImage(frame, 0, 0, 1000, 600);
@@ -70,7 +79,6 @@
         function toggleDG() {
             dgLigado = !dgLigado;
             document.getElementById('al-dg').src = dgLigado ? 'al_dg_on.png' : 'al_dg_off.png';
-            // Exemplo de chamada: desenharCabo('REDEFASE/quadro001.png');
         }
     </script>
 </body>
