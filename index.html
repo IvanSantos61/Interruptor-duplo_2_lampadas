@@ -7,74 +7,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
-        body { 
-            margin: 0; padding: 0; background-color: #060b13; color: #ffd700; 
-            font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; 
-            align-items: center; width: 100vw; min-height: 100vh; overflow-x: hidden; 
-        }
+        body { margin: 0; padding: 0; background-color: #060b13; color: #ffd700; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; width: 100vw; height: 100vh; overflow: hidden; }
 
-        /* --- TELA DE ENTRADA (SPLASH SCREEN) --- */
-        #tela-entrada { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background-color: #060b13; z-index: 2000; 
-            display: flex; align-items: center; justify-content: center; 
-            transition: opacity 0.5s ease, visibility 0.5s; 
-        }
-        .moldura-entrada { 
-            width: 80%; max-width: 900px; padding: 40px; border: 3px solid #00f0ff; border-radius: 25px; 
-            box-shadow: 0 0 50px rgba(0, 240, 255, 0.4), inset 0 0 20px rgba(0, 240, 255, 0.1); 
-            text-align: center; 
-        }
-        .intro-entrada { color: #008b8b; font-size: 40px; text-transform: uppercase; margin-bottom: 10px; }
-        .titulo-entrada { color: #00f0ff; font-size: 32px; text-shadow: 0 0 25px rgba(0, 240, 255, 0.6); margin-bottom: 20px; }
-        .subtitulo-entrada { color: #00f0ff; font-size: 18px; letter-spacing: 5px; margin-bottom: 40px; }
-        .btn-iniciar-lab { 
-            background: transparent; border: 2px solid #00f0ff; border-radius: 50px; 
-            color: #00f0ff; font-size: 16px; font-weight: bold; padding: 15px 40px; 
-            cursor: pointer; text-transform: uppercase; animation: pulsarBotao 1.5s infinite; 
-        }
-        @keyframes pulsarBotao { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; box-shadow: 0 0 20px #00f0ff; } }
+        /* --- TELA DE ENTRADA --- */
+        #tela-entrada { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #060b13; z-index: 2000; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
+        .moldura-entrada { width: 80%; max-width: 900px; height: 70%; max-height: 450px; border: 3px solid #00f0ff; border-radius: 25px; box-shadow: 0 0 50px rgba(0, 240, 255, 0.4), inset 0 0 20px rgba(0, 240, 255, 0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .intro-entrada { color: #008b8b; font-size: 55px; font-weight: 400; text-transform: uppercase; margin: 0 0 10px 0; }
+        .titulo-entrada { color: #00f0ff; font-size: 38px; text-transform: uppercase; text-shadow: 0 0 25px rgba(0, 240, 255, 0.6); margin: 0 0 25px 0; }
+        .subtitulo-entrada { color: #00f0ff; font-size: 24px; letter-spacing: 5px; text-transform: uppercase; margin: 0 0 40px 0; }
+        .btn-iniciar-lab { background: transparent; border: 2px solid #00f0ff; border-radius: 50px; color: #00f0ff; font-size: 16px; font-weight: bold; text-transform: uppercase; padding: 12px 35px; cursor: pointer; animation: pulsarBotao 1.5s infinite; }
+        @keyframes pulsarBotao { 0%, 100% { opacity: 0.5; box-shadow: 0 0 10px rgba(0,240,255,0.2); } 50% { opacity: 1; box-shadow: 0 0 25px rgba(0,240,255,0.6); } }
 
-        /* --- INTERFACE DO SIMULADOR --- */
-        #titulo-sistema { color: #00f0ff; font-size: 32px; margin-top: 20px; text-shadow: 0 0 15px rgba(0, 240, 255, 0.6); }
-        #painel-status { 
-            width: 90%; max-width: 1000px; margin: 15px 0; padding: 20px; 
-            background: rgba(4, 10, 20, 0.9); border: 1px solid #16222f; border-radius: 12px; 
-            text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center;
-        }
-        #instrucao { font-size: 18px; font-weight: bold; text-transform: uppercase; }
-        .tag-circuito { color: #ff3333; }
-        .tag-rede { color: #00ff00; }
+        /* --- INTERFACE --- */
+        #titulo-sistema { color: #00f0ff; font-size: 40px; margin-top: 2.5vh; text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 240, 255, 0.6); }
+        #painel-status { width: 100%; max-width: 1200px; margin: 1vh auto 2vh auto; padding: 20px; background: rgba(4, 10, 20, 0.9); border: 1px solid #16222f; border-radius: 12px; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+        #instrucao { color: #ffd700; font-size: 20px; font-weight: bold; text-transform: uppercase; }
+        .tag-circuito { color: #ff3333; font-weight: 900; }
+        .tag-rede { color: #00ff00; font-weight: 900; }
 
-        #container-simulador { 
-            position: relative; width: 1000px; height: 600px; 
-            border: 2px solid #1a2a44; background: url('ambiente.jpg') no-repeat center center; 
-            background-size: contain; 
-        }
-
-        /* CAMADAS E COMPONENTES */
-        .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
-        .alavanca, .tecla { position: absolute; z-index: 110; cursor: pointer; }
-        .lampada-acesa { position: absolute; z-index: 105; pointer-events: none; display: none; }
-        .conector { position: absolute; z-index: 115; display: none; pointer-events: none; }
-
-        /* PONTOS DE CLIQUE */
-        .ponto-conexao { 
-            position: absolute; width: 22px; height: 22px; border-radius: 50%; 
-            border: 2px solid #fff; z-index: 150; cursor: pointer; 
-            display: none; transform: translate(-50%, -50%); 
-        }
-        .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00; }
+        #projeto-container { position: relative; display: inline-block; width: 100%; max-width: 1000px; border: 2px solid #1f2937; box-shadow: 0 0 40px rgba(0,0,0,0.9); }
+        .imagem-base { width: 100%; height: auto; display: block; border-radius: 8px; }
+        .camada-full { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+        
+        /* COMPONENTES */
+        .tecla-movel, .carga-movel, .acessorio-movel { position: absolute; z-index: 120; }
+        #tecla-dg { top: 25.5%; left: 11.8%; width: 6%; cursor: pointer; }
+        #tecla-dr { top: 27.7%; left: 23.2%; width: 7.5%; cursor: pointer; }
+        #tecla-int { top: 53.7%; left: 75.6%; width: 7.7%; z-index: 100; cursor: pointer; }
+        #conector-neutro { top: 75.2%; left: 39.5%; width: 9%; display: none; z-index: 15; }
+        #conector-neutro-3vias { top: 20%; left: 51.4%; width: 9%; display: none; z-index: 16; transform: rotate(90deg); }
+        #lampada1, #lampada2 { width: 49.5%; display: none; z-index: 25; filter: drop-shadow(0 0 20px #fff700); }
+        #lampada1 { top: 4.5%; left: 68.8%; }
+        #lampada2 { top: 43.8%; left: 68.8%; }
 
         /* HOTSPOTS */
-        .hotspot { position: absolute; cursor: help; z-index: 100; border: 1px solid transparent; }
-        .hotspot:hover { border: 1px solid rgba(255, 255, 0, 0.6); background: rgba(255, 255, 0, 0.05); }
+        .hotspot { position: absolute; background: transparent; border: 1px dashed rgba(0,240,255,0.25); z-index: 90; cursor: help; transition: all 0.2s; }
+        .hotspot:hover { border-color: #00f0ff; background: rgba(0,240,255,0.08); box-shadow: 0 0 12px rgba(0,240,255,0.4); }
+        .hotspot::before { content: attr(data-name); position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.92); color: #ffd700; padding: 8px 12px; border-radius: 6px; border: 1px solid #00f0ff; white-space: nowrap; font-size: 12px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        .hotspot:hover::before { opacity: 1; }
 
-        #tooltip {
-            position: fixed; background: rgba(255, 255, 0, 0.95); color: #060b13; 
-            padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; 
-            display: none; z-index: 2000; pointer-events: none;
-        }
+        /* PONTOS DE CLIQUE */
+        .ponto-clique { position: absolute; width: 1.8%; aspect-ratio: 1/1; border: 0.2vw solid #fff; border-radius: 50%; cursor: pointer; z-index: 130; transform: translate(-50%, -50%); display: none; }
+        .ponto-fase { background: rgba(255, 0, 0, 0.7); }
+        .ponto-neutro { background: rgba(0, 150, 255, 0.7); }
+        .verde { background: #00ff00 !important; }
     </style>
 </head>
 <body>
@@ -84,143 +60,75 @@
             <div class="intro-entrada">Laboratório SMT Pro</div>
             <h1 class="titulo-entrada">INTERRUPTOR SIMPLES PARA 2 LÂMPADAS</h1>
             <h2 class="subtitulo-entrada">CIRCUITO MONOFÁSICO - 127V</h2>
-            <div style="color: #445566; margin-bottom: 30px;">© Ivan Santos - FioCerto 2026</div>
-            <button class="btn-iniciar-lab" onclick="iniciarLaboratorio()">Iniciar Laboratório</button>
+            <div style="color: #445566; margin-bottom: 30px;">© Ivan Santos - ConectaeadPLUS - 2026</div>
+            <button class="btn-iniciar-lab" onclick="iniciarLaboratorio()">Clique para iniciar o Laboratório</button>
         </div>
     </div>
 
     <div id="titulo-sistema">Laboratório SMT Pro</div>
-    <div id="painel-status"><span id="instrucao">AGUARDANDO INÍCIO...</span></div>
+    <div id="painel-status"><span id="instrucao">CARREGANDO...</span></div>
 
-    <div id="container-simulador">
-        <div class="hotspot" style="top:12%; left:6%; width:35px; height:200px;" onmouseover="showTip('BARRA DE ATERRAMENTO')" onmouseout="hideTip()"></div>
-        <div class="hotspot" style="top:15%; left:12%; width:45px; height:150px;" onmouseover="showTip('DISJUNTOR GERAL')" onmouseout="hideTip()"></div>
-        <div class="hotspot" style="top:15%; left:19.5%; width:90px; height:161px;" onmouseover="showTip('DISPOSITIVO DR')" onmouseout="hideTip()"></div>
-        <div class="hotspot" style="top:15%; left:28.5%; width:115px; height:152px;" onmouseover="showTip('DISJUNTORES CIRCUITOS')" onmouseout="hideTip()"></div>
-        <div class="hotspot" style="top:12%; left:42.6%; width:35px; height:200px;" onmouseover="showTip('BARRA DE NEUTRO')" onmouseout="hideTip()"></div>
+    <div id="projeto-container">
+        <img src="ambiente.jpg" class="imagem-base">
 
-        <img id="REDEFASE" class="camada-cabo">
-        <img id="REDENEUTRO" class="camada-cabo">
-        <img id="FASEINT" class="camada-cabo">
-        <img id="JUMP" class="camada-cabo">
-        <img id="RETORNO1" class="camada-cabo">
-        <img id="RETORNO2" class="camada-cabo">
-        <img id="NEUTROL1" class="camada-cabo">
-        <img id="NEUTROL2" class="camada-cabo">
+        <div class="hotspot" style="top:13%; left:11.5%; width:40px; height:150px;" data-name="DISJUNTOR GERAL"></div>
+        <div class="hotspot" style="top:12.5%; left:19.5%; width:88px; height:160px;" data-name="DISPOSITIVO DR"></div>
+        <div class="hotspot" style="top:9%; left:43.2%; width:22px; height:200px;" data-name="BARRA DE NEUTRO"></div>
+        <div class="hotspot" style="top:50%; left:5%; width:40px; height:180px;" data-name="REDE ELÉTRICA"></div>
+        <div class="hotspot" style="top:5.6%; left:52.3%; width:120px; height:200px;" data-name='CAIXA DE PASSAGEM 4x2"'></div>
+        <div class="hotspot" style="top:61%; left:39%; width:120px; height:200px;" data-name='CAIXA DE PASSAGEM 4x2"'></div>
+        <div class="hotspot" style="top:42%; left:71.6%; width:100px; height:210px;" data-name='INTERRUPTOR SIMPLES'></div>
+        <div class="hotspot" style="top:38.8%; left:86.5%; width:110px; height:110px;" data-name='LÂMPADA LED'></div>
+        <div class="hotspot" style="top:78.6%; left:86.5%; width:110px; height:110px;" data-name='LÂMPADA LED'></div>
+        <div class="hotspot" style="top:29%; left:88%; width:70px; height:70px;" data-name='BOCAL E-27'></div>
+        <div class="hotspot" style="top:68%; left:88%; width:70px; height:70px;" data-name='BOCAL E-27'></div>
 
-        <img id="con-fase" src="con_derivacao.png" class="conector" style="top: 14%; left: 57%; width: 40px;">
-        <img id="al-dg" src="al_dg_off.png" class="alavanca" style="top: 27.6%; left: 12%; width: 39px;" onclick="toggleDG()">
-        <img id="al-dr" src="al_dr_off.png" class="alavanca" style="top: 30%; left: 23.5%; width: 55px;" onclick="toggleDR()">
-        <img id="tecla-l1" src="intum_off.png" class="tecla" style="top: 64.5%; left: 57.5%; width: 65px;" onclick="toggleTecla(1)">
-        <img id="tecla-l2" src="intdois_off.png" class="tecla" style="top: 68.9%; left: 57.5%; width: 65px;" onclick="toggleTecla(2)">
+        <div id="camadas-fios"></div>
 
-        <img id="lamp1-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 66.6%; width: 170px;">
-        <img id="lamp2-on" src="lamp_on.png" class="lampada-acesa" style="top: 60.5%; left: 82.9%; width: 170px;">
+        <img src="conector2vias.png" id="conector-neutro" class="acessorio-movel">
+        <img src="conector3vias.png" id="conector-neutro-3vias" class="acessorio-movel">
+        <img src="al_dg_off.png" id="tecla-dg" class="tecla-movel" onclick="toggleDG()">
+        <img src="al_dr_off.png" id="tecla-dr" class="tecla-movel" onclick="toggleDR()">
+        <img src="tec_int_off.png" id="tecla-int" class="tecla-movel" onclick="toggleINT()">
+        <img src="lamp_on.png" id="lampada1" class="carga-movel">
+        <img src="lamp_on.png" id="lampada2" class="carga-movel">
 
-        <div id="ponto-A" class="ponto-conexao" onclick="cliquePonto('A')"></div>
-        <div id="ponto-B" class="ponto-conexao" onclick="cliquePonto('B')"></div>
+        <div id="ponto-A" class="ponto-clique"></div>
+        <div id="ponto-B" class="ponto-clique"></div>
     </div>
 
-    <div id="tooltip"></div>
-
     <script>
-        const etapas = [
-            { id: 'REDEFASE', cor: 'red', msg: 'REDE: CONECTE A FASE NO DISJUNTOR GERAL', a: {t:38, l:26}, b: {t:17, l:99}, max: 96 },
-            { id: 'REDENEUTRO', cor: 'blue', msg: 'REDE: CONECTE O NEUTRO NO BARRAMENTO', a: {t:35, l:44.5}, b: {t:14, l:99}, max: 115 },
-            { id: 'FASEINT', cor: 'red', msg: 'CIRCUITO: LEVE A FASE AO INTERRUPTOR', a: {t:19, l:60}, b: {t:67, l:58}, max: 43 },
-            { id: 'JUMP', cor: 'red', msg: 'CIRCUITO: FAÇA O JUMP ENTRE AS SEÇÕES', a: {t:68, l:56}, b: {t:72, l:58}, max: 10 },
-            { id: 'RETORNO1', cor: 'yellow', msg: 'CIRCUITO: LEVE O RETORNO PARA A LÂMPADA 2', a: {t:68, l:64}, b: {t:55, l:89.7}, max: 54 },
-            { id: 'RETORNO2', cor: 'yellow', msg: 'CIRCUITO: LEVE O RETORNO PARA A LÂMPADA 1', a: {t:73, l:64}, b: {t:55, l:75}, max: 45 },
-            { id: 'NEUTROL1', cor: 'blue', msg: 'CIRCUITO: CONECTE O NEUTRO NA LÂMPADA 1', a: {t:15, l:77.2}, b: {t:55, l:75}, max: 25 },
-            { id: 'NEUTROL2', cor: 'blue', msg: 'CIRCUITO: CONECTE O NEUTRO NA LÂMPADA 2', a: {t:15, l:93.2}, b: {t:56, l:91.5}, max: 25 }
-        ];
-
-        let etapaAtiva = 0;
-        let pA_ok = false;
-        let dgOn = false, drOn = false, t1On = false, t2On = false;
-
+        // Lógica de Splash e Interface
         function iniciarLaboratorio() {
             document.getElementById('tela-entrada').style.opacity = "0";
             setTimeout(() => {
                 document.getElementById('tela-entrada').style.visibility = "hidden";
-                proximaEtapa();
+                iniciarEtapa();
             }, 500);
         }
 
-        function proximaEtapa() {
-            if (etapaAtiva >= etapas.length) {
-                document.getElementById('instrucao').innerHTML = "<span style='color:#00ff00'>INSTALAÇÃO CONCLUÍDA! TESTE O PAINEL.</span>";
-                document.getElementById('ponto-A').style.display = 'none';
-                document.getElementById('ponto-B').style.display = 'none';
-                return;
-            }
-            const info = etapas[etapaAtiva];
-            document.getElementById('instrucao').innerHTML = info.msg.replace('REDE:', '<span class="tag-rede">REDE:</span>').replace('CIRCUITO:', '<span class="tag-circuito">CIRCUITO:</span>');
-            
-            const pA = document.getElementById('ponto-A');
-            pA.style.top = info.a.t + "%"; pA.style.left = info.a.l + "%";
-            pA.style.backgroundColor = info.cor;
-            pA.style.display = "block";
-            pA.classList.remove('ponto-verde');
-
-            const pB = document.getElementById('ponto-B');
-            pB.style.top = info.b.t + "%"; pB.style.left = info.b.l + "%";
-            pB.style.backgroundColor = info.cor;
-            pB.style.display = "none";
-            pB.classList.remove('ponto-verde');
-            pA_ok = false;
-
-            if (info.id === 'FASEINT') document.getElementById('con-fase').style.display = 'block';
+        function formatarTextoInstrucao(texto) {
+            return texto.replace(/CIRCUITO:/g, '<span class="tag-circuito">CIRCUITO:</span>')
+                        .replace(/REDE:/g, '<span class="tag-rede">REDE:</span>');
         }
 
-        function cliquePonto(tipo) {
-            if (tipo === 'A') {
-                pA_ok = true;
-                document.getElementById('ponto-A').classList.add('ponto-verde');
-                document.getElementById('ponto-B').style.display = "block";
-            } else if (tipo === 'B' && pA_ok) {
-                document.getElementById('ponto-B').classList.add('ponto-verde');
-                animarCabo();
-            }
+        // Simulação de Etapas (Exemplo de estrutura)
+        function iniciarEtapa() {
+            document.getElementById('instrucao').innerHTML = formatarTextoInstrucao("REDE: CLIQUE NA REFERENCIA INDICADA NO DR PARA INICIAR.");
+            // Aqui entra a sua lógica de 'etapas' e 'pontoA/pontoB'
         }
 
-        async function animarCabo() {
-            const info = etapas[etapaAtiva];
-            const img = document.getElementById(info.id);
-            for (let i = 1; i <= info.max; i++) {
-                img.src = `${info.id}/quadro${String(i).padStart(3, '0')}.png`;
-                await new Promise(r => setTimeout(r, 20));
-            }
-            etapaAtiva++;
-            setTimeout(proximaEtapa, 500);
-        }
+        // Funções de clique simplificadas para demonstração
+        let dg = false, dr = false, int = false;
+        function toggleDG() { dg = !dg; document.getElementById('tecla-dg').src = dg ? 'al_dg_on.png' : 'al_dg_off.png'; atualizarLeds(); }
+        function toggleDR() { dr = !dr; document.getElementById('tecla-dr').src = dr ? 'al_dr_on.png' : 'al_dr_off.png'; atualizarLeds(); }
+        function toggleINT() { int = !int; document.getElementById('tecla-int').src = int ? 'tec_int_on.png' : 'tec_int_off.png'; atualizarLeds(); }
 
-        function toggleDG() { dgOn = !dgOn; document.getElementById('al-dg').src = dgOn ? 'al_dg_on.png' : 'al_dg_off.png'; checarEnergia(); }
-        function toggleDR() { drOn = !drOn; document.getElementById('al-dr').src = drOn ? 'al_dr_on.png' : 'al_dr_off.png'; checarEnergia(); }
-        function toggleTecla(n) {
-            if (n === 1) { t1On = !t1On; document.getElementById('tecla-l1').src = t1On ? 'intum_on.png' : 'intum_off.png'; }
-            else { t2On = !t2On; document.getElementById('tecla-l2').src = t2On ? 'intdois_on.png' : 'intdois_off.png'; }
-            checarEnergia();
+        function atualizarLeds() {
+            const energia = dg && dr && int;
+            document.getElementById('lampada1').style.display = energia ? 'block' : 'none';
+            document.getElementById('lampada2').style.display = energia ? 'block' : 'none';
         }
-
-        function checarEnergia() {
-            const pronto = etapaAtiva >= etapas.length;
-            const energizado = dgOn && drOn;
-            if (pronto && energizado) {
-                document.getElementById('lamp1-on').style.display = t1On ? 'block' : 'none';
-                document.getElementById('lamp2-on').style.display = t2On ? 'block' : 'none';
-            } else {
-                document.getElementById('lamp1-on').style.display = 'none';
-                document.getElementById('lamp2-on').style.display = 'none';
-            }
-        }
-
-        const tip = document.getElementById('tooltip');
-        function showTip(t) { tip.innerText = t; tip.style.display = 'block'; }
-        function hideTip() { tip.style.display = 'none'; }
-        document.addEventListener('mousemove', (e) => {
-            tip.style.left = (e.clientX + 15) + 'px'; tip.style.top = (e.clientY - 15) + 'px';
-        });
     </script>
 </body>
 </html>
