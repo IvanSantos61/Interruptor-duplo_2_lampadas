@@ -63,9 +63,9 @@
             background-size: contain; border: 1px solid #1a2a44; 
         }
 
-        /* --- BOTÕES COM COORDENADAS --- */
+        /* --- BOTÕES DE AÇÃO --- */
         .btn-acao {
-            position: absolute; /* Necessário para usar top e left */
+            position: absolute; 
             width: 140px; padding: 10px; border-radius: 20px; border: none;
             font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold;
             cursor: pointer; text-transform: uppercase; color: white;
@@ -73,25 +73,51 @@
             z-index: 200;
         }
         
-        /* Ajuste os valores de top e left abaixo como desejar */
         .btn-ajuda { 
-            top: 485px; 
-            left: 120px; 
-            background: #1a2a44; 
-            border: 1px solid #00f0ff; 
-            cursor: wait; 
-            opacity: 0.8; 
+            top: 485px; left: 120px; 
+            background: #00a8b5; border: 1px solid #00f0ff; 
+            box-shadow: 0 4px #005a61;
         }
 
         .btn-reiniciar { 
-            top: 535px; 
-            left: 120px; 
-            background: #cc0000; 
-            box-shadow: 0 4px #800000; 
+            top: 535px; left: 120px; 
+            background: #cc0000; box-shadow: 0 4px #800000; 
         }
 
-        .btn-acao:active { transform: scale(0.95); }
-        .btn-reiniciar:active { box-shadow: 0 1px #800000; transform: translateY(3px) scale(0.95); }
+        .btn-acao:active { transform: scale(0.95); box-shadow: 0 1px #000; }
+
+        /* --- MODAL DE AJUDA (LISTA) --- */
+        .modal-ajuda-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 3000;
+            display: none; align-items: center; justify-content: center;
+        }
+        .container-lista-ajuda {
+            width: 450px; background: #060b13; border: 2px solid #00f0ff;
+            border-radius: 15px; padding: 30px; box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            text-align: center;
+        }
+        .ajuda-titulo { color: #ffcc00; font-size: 20px; margin-bottom: 25px; letter-spacing: 2px; }
+        .item-ajuda {
+            background: #111a27; border: 1px solid #1a2a44; color: #fff;
+            padding: 15px; margin-bottom: 10px; border-radius: 5px;
+            cursor: pointer; text-align: left; font-size: 13px;
+            transition: all 0.3s;
+        }
+        .item-ajuda:hover { border-color: #00f0ff; background: #1a2a44; color: #00f0ff; }
+        .btn-fechar-modal {
+            margin-top: 20px; background: #333; color: #aaa; border: none;
+            padding: 10px 30px; border-radius: 5px; cursor: pointer;
+            font-family: 'Orbitron', sans-serif; font-size: 12px;
+        }
+
+        /* --- MODAL DE IMAGEM TÉCNICA --- */
+        #modal-ver-imagem {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); z-index: 4000;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #img-tecnica-ajuda { max-width: 85%; max-height: 80%; border: 2px solid #00f0ff; border-radius: 10px; }
 
         /* Elementos Técnicos */
         .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: block; }
@@ -111,6 +137,22 @@
 
     <div id="tooltip"></div>
 
+    <div id="modal-ajuda" class="modal-ajuda-overlay">
+        <div class="container-lista-ajuda">
+            <h2 class="ajuda-titulo">Ajuda Técnico</h2>
+            <div class="item-ajuda" onclick="abrirImagem('ligacaoint2P.png')">1. Ligação do Interruptor</div>
+            <div class="item-ajuda" onclick="abrirImagem('ligabocal.png')">2. Ligação das Lâmpadas</div>
+            <div class="item-ajuda" onclick="abrirImagem('conectoderiv.png')">3. Emendas e conexões</div>
+            <div class="item-ajuda" onclick="abrirImagem('moldura.png')">4. Lista de material</div>
+            <button class="btn-fechar-modal" onclick="fecharAjuda()">Fechar</button>
+        </div>
+    </div>
+
+    <div id="modal-ver-imagem">
+        <img id="img-tecnica-ajuda" src="">
+        <button class="btn-fechar-modal" style="background: #00f0ff; color: #000; font-weight: bold; margin-top: 30px;" onclick="voltarParaLista()">VOLTAR À LISTA</button>
+    </div>
+
     <div id="splash-screen">
         <div class="moldura-splash">
             <h1 class="splash-h1">LABORATÓRIO SMT PRO</h1>
@@ -129,7 +171,7 @@
         </div>
 
         <div id="container-simulador">
-            <button class="btn-acao btn-ajuda">AJUDA</button>
+            <button class="btn-acao btn-ajuda" onclick="abrirAjuda()">AJUDA</button>
             <button class="btn-acao btn-reiniciar" onclick="reiniciarFluxo()">REINICIAR</button>
 
             <div class="hotspot" style="top: 12%; left: 6%; width: 35px; height: 200px;" onmouseover="showTip('BARRA DE ATERRAMENTO')" onmouseout="hideTip()"></div>
@@ -176,6 +218,24 @@
     </div>
 
     <script>
+        // --- FUNÇÕES DA AJUDA ---
+        function abrirAjuda() {
+            document.getElementById('modal-ajuda').style.display = 'flex';
+        }
+        function fecharAjuda() {
+            document.getElementById('modal-ajuda').style.display = 'none';
+        }
+        function abrirImagem(url) {
+            document.getElementById('modal-ajuda').style.display = 'none';
+            document.getElementById('img-tecnica-ajuda').src = url;
+            document.getElementById('modal-ver-imagem').style.display = 'flex';
+        }
+        function voltarParaLista() {
+            document.getElementById('modal-ver-imagem').style.display = 'none';
+            document.getElementById('modal-ajuda').style.display = 'flex';
+        }
+
+        // --- LÓGICA DO SIMULADOR ---
         const coordenadasInstalacao = [
             { id: 'REDEFASE',   cor: 'red',    a: { top: 38, left: 26 }, b: { top: 17, left: 99 } },
             { id: 'REDENEUTRO', cor: 'blue',   a: { top: 35, left: 44.5}, b: { top: 14, left: 99 } },
@@ -204,9 +264,7 @@
             }, 600);
         }
 
-        function reiniciarFluxo() {
-            location.reload(); 
-        }
+        function reiniciarFluxo() { location.reload(); }
 
         function carregarPasso() {
             if (passoAtivo >= coordenadasInstalacao.length) {
