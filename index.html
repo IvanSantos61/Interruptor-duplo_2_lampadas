@@ -60,14 +60,23 @@
         .prefixo-rede { color: #ff0000; margin-right: 5px; }
 
         /* CONTAINER SEM MOLDURA */
-        #container-simulador { 
-            position: relative; width: 1000px; height: 600px; 
-            background: url('ambiente.jpg') no-repeat center center; 
-            background-size: contain; 
-            border: none !important; /* Remove a moldura indicada pelas setas */
-            outline: none !important;
-            box-shadow: none !important;
-        }
+   #container-simulador {
+    position: relative;
+
+    width: 1000px;
+    height: 600px;
+
+    background: url('ambiente.jpg') no-repeat center center;
+    background-size: cover;
+
+    overflow: hidden;
+
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+
+    transform: translateZ(0);
+}
 
         .controles-inferiores { position: absolute; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 200; }
         .btn-acao { width: 140px; padding: 10px; border-radius: 20px; border: none; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; color: white; }
@@ -75,12 +84,39 @@
         .btn-reiniciar { background: #cc0000; box-shadow: 0 4px #800000; }
 
         /* Elementos Técnicos */
-        .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: block; }
+        .camada-cabo {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+
+    background: transparent !important;
+
+    pointer-events: none;
+    z-index: 10;
+
+    image-rendering: auto;
+
+    transform: translateZ(0);
+}
         .ponto-conexao { position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; z-index: 150; cursor: pointer; display: none; transform: translate(-50%, -50%); }
         .ponto-verde { background: #00ff00 !important; box-shadow: 0 0 15px #00ff00 !important; }
         .hotspot { position: absolute; cursor: help; z-index: 100; background: transparent; }
         
         #tooltip { position: fixed; background: rgba(255, 255, 0, 0.95); color: #060b13; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: bold; pointer-events: none; display: none; z-index: 2000; border: 1px solid #fff; text-transform: uppercase; }
+img {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+        
     </style>
 </head>
 <body>
