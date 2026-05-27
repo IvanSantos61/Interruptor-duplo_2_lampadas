@@ -32,26 +32,23 @@
         .ind-off { color: #ff0000; font-weight: bold; }
         .ind-on { color: #00ff00; font-weight: bold; text-shadow: 0 0 10px #00ff00; }
 
-        /* --- PONTOS DE CONEXÃO CORRIGIDOS --- */
+        /* --- PONTOS DE CONEXÃO --- */
         .ponto-conexao { 
             position: absolute; width: 22px; height: 22px; border-radius: 50%; 
             border: 2px solid #fff; z-index: 150; cursor: pointer; display: none; 
             transform: translate(-50%, -50%); transition: background-color 0.1s ease;
         }
-        /* Quando selecionado, ignora a cor original e vira verde */
-        .ponto-selecionado { 
-            background-color: #00ff00 !important; 
-            border: 2px solid #fff !important;
-            box-shadow: 0 0 15px #00ff00; 
-        }
+        .ponto-selecionado { background-color: #00ff00 !important; border: 2px solid #fff !important; box-shadow: 0 0 15px #00ff00; }
+
+        /* --- HOTSPOTS --- */
+        .hotspot { position: absolute; cursor: help; z-index: 100; }
+        .hotspot:hover { border: 1px solid rgba(255, 255, 0, 0.4); background: rgba(255, 255, 0, 0.05); }
 
         .camada-cabo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
         .alavanca, .tecla { position: absolute; z-index: 110; cursor: pointer; }
         .lampada-acesa { position: absolute; z-index: 105; pointer-events: none; display: none; }
         .conector { position: absolute; z-index: 115; display: none; }
-        .hotspot { position: absolute; cursor: help; z-index: 100; }
-        .hotspot:hover { border: 1px solid rgba(255, 255, 0, 0.4); background: rgba(255, 255, 0, 0.05); }
-
+        
         #tooltip { position: fixed; background: rgba(255, 255, 0, 0.95); color: #000; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: bold; display: none; z-index: 2000; border: 1px solid #fff; }
         .btn-acao { position: absolute; width: 140px; padding: 10px; border-radius: 20px; border: none; font-family: 'Orbitron'; cursor: pointer; color: white; z-index: 200; }
         .btn-ajuda { top: 485px; left: 120px; background: #1a2a44; border: 1px solid #00f0ff; }
@@ -106,8 +103,17 @@
             <div class="hotspot" style="top:15%; left:12%; width:45px; height:150px;" onmouseover="showTip('DISJUNTOR GERAL')"></div>
             <div class="hotspot" style="top:15%; left:15.6%; width:40px; height:153px;" onmouseover="showTip('DPS')"></div>
             <div class="hotspot" style="top:15%; left:19.5%; width:90px; height:161px;" onmouseover="showTip('DISPOSITIVO DR')"></div>
-            <div class="hotspot" style="top:56%; left:57%; width:70px; height:160px;" onmouseover="showTip('INTERRUPTOR')"></div>
+            <div class="hotspot" style="top:15%; left:28.5%; width:115px; height:152px;" onmouseover="showTip('DISJUNTORES DE CIRCUITO')"></div>
+            <div class="hotspot" style="top:12%; left:42.6%; width:35px; height:200px;" onmouseover="showTip('BARRA DE NEUTRO')"></div>
+            <div class="hotspot" style="top:55%; left:6%; width:45px; height:130px;" onmouseover="showTip('REDE ELÉTRICA EXTERNA')"></div>
+            <div class="hotspot" style="top:58%; left:27.5%; width:130px; height:180px;" onmouseover="showTip('CAIXA DE PASSAGEM (QUADRO)')"></div>
+            <div class="hotspot" style="top:13%; left:54.5%; width:130px; height:180px;" onmouseover="showTip('CAIXA 4x2 (INTERRUPTOR)')"></div>
+            <div class="hotspot" style="top:13%; left:70.5%; width:130px; height:180px;" onmouseover="showTip('CAIXA 4x2 (LÂMPADA 1)')"></div>
+            <div class="hotspot" style="top:13%; left:86.5%; width:130px; height:180px;" onmouseover="showTip('CAIXA 4x2 (LÂMPADA 2)')"></div>
+            <div class="hotspot" style="top:56%; left:57%; width:70px; height:160px;" onmouseover="showTip('INTERRUPTOR DUPLO')"></div>
+            <div class="hotspot" style="top:60%; left:73%; width:40px; height:48px;" onmouseover="showTip('BOCAL E27 (1)')"></div>
             <div class="hotspot" style="top:67%; left:71.7%; width:66px; height:85px;" onmouseover="showTip('LÂMPADA LED 1')"></div>
+            <div class="hotspot" style="top:60%; left:89.3%; width:40px; height:48px;" onmouseover="showTip('BOCAL E27 (2)')"></div>
             <div class="hotspot" style="top:67%; left:88.2%; width:66px; height:85px;" onmouseover="showTip('LÂMPADA LED 2')"></div>
 
             <img id="REDEFASE" class="camada-cabo"><img id="REDENEUTRO" class="camada-cabo">
@@ -165,21 +171,16 @@
                 return;
             }
             const item = coordenadasInstalacao[passoAtivo];
-            
-            // Exibe conectores conforme o passo
             if (item.id === 'FASEINT') document.getElementById('con-fase').style.display = 'block';
             if (item.id === 'NEUTROL1') document.getElementById('con-neutro1').style.display = 'block';
             if (item.id === 'NEUTROL2') document.getElementById('con-neutro2').style.display = 'block';
 
             document.getElementById('msg').innerHTML = `CONECTAR ${item.id}`;
-            
-            // PONTO A: Inicia com a cor do cabo e sem brilho verde
             const pA = document.getElementById('ponto-A');
             pA.style.top = item.a.top + "%"; pA.style.left = item.a.left + "%";
             pA.style.backgroundColor = item.cor; 
             pA.classList.remove('ponto-selecionado');
             pA.style.display = "block";
-
             document.getElementById('ponto-B').style.display = "none";
             pA_ok = false;
         }
@@ -188,9 +189,7 @@
             const item = coordenadasInstalacao[passoAtivo];
             if (tipo === 'A') { 
                 pA_ok = true; 
-                document.getElementById('ponto-A').classList.add('ponto-selecionado'); // Fica Verde
-                
-                // PONTO B: Aparece com a cor do cabo
+                document.getElementById('ponto-A').classList.add('ponto-selecionado'); 
                 const pB = document.getElementById('ponto-B');
                 pB.style.top = item.b.top + "%"; pB.style.left = item.b.left + "%";
                 pB.style.backgroundColor = item.cor;
@@ -198,8 +197,8 @@
                 pB.style.display = "block"; 
             }
             else if (tipo === 'B' && pA_ok) { 
-                document.getElementById('ponto-B').classList.add('ponto-selecionado'); // Fica Verde
-                setTimeout(processarCabo, 100); // Pequeno delay para o usuário ver o verde
+                document.getElementById('ponto-B').classList.add('ponto-selecionado');
+                setTimeout(processarCabo, 100); 
             }
         }
 
@@ -225,10 +224,8 @@
         function verificarEnergia() {
             const fiaçãoOk = passoAtivo >= coordenadasInstalacao.length;
             const energiaPresente = dgLigado && drLigado && fiaçãoOk;
-
             document.getElementById('lamp1-on').style.display = (energiaPresente && tecla1Ligada) ? 'block' : 'none';
             document.getElementById('lamp2-on').style.display = (energiaPresente && tecla2Ligada) ? 'block' : 'none';
-            
             atualizarIcone('st-dg', dgLigado);
             atualizarIcone('st-dr', drLigado);
             atualizarIcone('st-l1', tecla1Ligada);
@@ -240,7 +237,6 @@
             if (el) { el.innerText = ligado ? "LIG" : "DES"; el.className = ligado ? "ind-on" : "ind-off"; }
         }
 
-        // AJUDA
         function abrirAjuda() { document.getElementById('modal-ajuda').style.display = 'flex'; }
         function fecharAjuda() { document.getElementById('modal-ajuda').style.display = 'none'; }
         function abrirImagem(url) { isToggleItem3 = false; document.getElementById('modal-ajuda').style.display = 'none'; document.getElementById('img-tecnica-ajuda').src = url; document.getElementById('modal-ver-imagem').style.display = 'flex'; }
@@ -248,7 +244,6 @@
         function handleImageClick() { if (isToggleItem3) { const img = document.getElementById('img-tecnica-ajuda'); img.src = img.src.includes('open') ? 'conectder_close.png' : 'conectder_open.png'; } }
         function voltarParaLista() { document.getElementById('modal-ver-imagem').style.display = 'none'; document.getElementById('modal-ajuda').style.display = 'flex'; }
 
-        // TOOLTIP
         const tip = document.getElementById('tooltip');
         function showTip(t) { tip.innerText = t; tip.style.display = 'block'; }
         function hideTip() { tip.style.display = 'none'; }
